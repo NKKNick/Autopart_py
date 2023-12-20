@@ -23,7 +23,7 @@
               <h2 style="color: red;">สินค้าหมด</h2>
               {% else %}
               <p class="card-text">จำนวนคงเหลือ: {{i.stock}}</p>
-              <a href="#" class="btn btn-primary" style="background-color: #a4db74; color:black">เพิ่มลงตระกร้า</a>
+              <a href="{%url 'addcart' i.id %}" class="btn btn-primary" style="background-color: #a4db74; color:black">เพิ่มลงตระกร้า</a>
               {% endif %}
             </div>
           </div>

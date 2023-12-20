@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from custom.line_notify import send_line_notification
-
-from userinterface.models import product
+from userinterface.models import *
+from .models import product as Product
 
 
 # Create your views here.
@@ -16,8 +16,8 @@ def detail(req,id):
 
 
 def stock(req):
-    obj = product.objects.all()
-    for i in obj:
+    product = Product.objects.all()
+    for i in product:
         if i.stock <= 0:
             message = f"{i.product_name} เหลือ {i.stock}"
             send_line_notification(message)
