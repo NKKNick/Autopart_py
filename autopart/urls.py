@@ -25,6 +25,8 @@ urlpatterns = [
     path("",include("usersapp.urls")),
     path("",include("user_cart.urls")),
     path("",include("user_order.urls")),
+    path("",include("worker.urls")),
+    
 ] 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

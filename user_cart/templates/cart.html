@@ -25,8 +25,9 @@
                                             <h6 class="text-black mb-0">{{i.amount}} x {{i.product.product_name}}</h6>
                                         </div>
                                         <div class="col-md-3 col-lg-2 col-xl-3 offset-lg-1">
-                                            <h6 class="mb-0">{{i.product.price | intcomma }}</h6>   
+                                            <h6 class="mb-0">{{ i.sum | intcomma }}</h6>   
                                         </div>
+                                        
                                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                             <a href="{%url 'delete_cart' i.product.id %}"><h5><i class="bi bi-trash3"></i></h5></a>
                                          </div>
@@ -40,15 +41,21 @@
                                 <div class="p-5">
                                     <h4 class="fw-bold mb-5 mt-0 pt-0">สรุปคำสั่งซื้อ</h4>
                                     <hr class="my-4">
-                                    <div class="d-flex justify-content-between mb-5">
+                                    <div class="d-flex justify-content-between mb-2">
                                         <h5 class="text-uppercase">ยอดชำระเงินรวม</h5>
                                         <h5>{{total | intcomma}} บาท</h5>
                                     </div>
-                                    <a href="order.html">
-                                        <button type="button" class="btn btn-primary w-100 text-center" data-mdb-ripple-color="dark">
-                                            ดำเนินการ
-                                        </button>
-                                    </a>
+                                    <form>
+                                        <input type="radio" id="send" name="deli_se">
+                                        <label for="send" class="mb-3">ส่งไปยังบ้านคุณ</label><br>
+                                        <input type="radio" id="take" name="deli_se">
+                                        <label for="take" class="mb-5">รับที่ร้าน</label><br>
+                                        <a href="#">
+                                            <button type="button" class="btn btn-primary w-100 text-center" data-mdb-ripple-color="dark">
+                                                ดำเนินการ
+                                            </button>
+                                        </a>
+                                      </form>
                                 </div>
                             </div>
                         </div>

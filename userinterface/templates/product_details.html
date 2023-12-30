@@ -27,10 +27,17 @@
                     </div>
                     <div class="mbr-section-btn pt-3">
                         <br>
+                        {% if product.stock <= 0 %}
+                        <a href="#" class="btn btn-primary display-4" style="background-color: gray; color: black;">
+                            <i class="bi bi-cart3"></i></i>&nbsp;
+                            สินค้าหมด
+                        </a>
+                        {% else %}
                         <a href="{%url 'addcart' product.id %}" class="btn btn-primary display-4" style="background-color: #a4db74; color: black;">
                             <i class="bi bi-cart3"></i></i>&nbsp;
                             หยิบสินค้าลงตะกร้า
                         </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
