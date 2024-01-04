@@ -14,5 +14,7 @@ class OrderDetail(models.Model):
     product = models.CharField(max_length=255)
     price = models.IntegerField()
     amount = models.IntegerField()
+    created = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey(Order,on_delete=models.CASCADE,)
     
 
