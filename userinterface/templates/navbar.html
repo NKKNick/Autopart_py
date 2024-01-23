@@ -22,10 +22,12 @@
     <!-- navbar -->
     <section class="menu menu3 cid-tsEQosCCDP">
     <ul style="z-index: 1;">
+    <!-- ซ้าย -->
       {% if request.user.is_authenticated %}
-        <li style="height: 4px;"><a href="{%url 'home'%}"><img src="{% static 'images/logo.png' %}" alt="logo" style="height: 3.5rem; "></a></li>
-        <li><a href="#news" class="middle">สินค้า</a></li>
-        <li><a href="#contact" class="middle">Contact</a></li>
+        <li><a href="{%url 'home'%}"><img src="{% static 'images/logo.png' %}" alt="logo" style="height: 3.5rem; "></a></li>
+        <li><a href="{%url 'home' %}" class="middle">สินค้า</a></li>
+        <li><a href="{%url 'contact' %}" class="middle">Contact</a></li>
+        <!-- ขวา -->
         <button style="float:right; margin-right: 2%; width: 5rem;" class="button"><a href="/logout" style="color: white;">logout</a></button>
         <li style="float: right; margin-right: 2%;" class="nav-item"><a class="middle">Hello {{user.username}}!</a></li>
         <li style="float: right; margin-right: 2%;" class="nav-item">
@@ -36,9 +38,10 @@
     </ul>
   </section>
       {% else %}
-      <li style="height: 4px;"><a href="{%url 'home'%}"><img src="{% static 'images/logo.png' %}" alt="logo" style="height: 3.5rem; "></a></li>
-        <li><a href="#news" class="middle">สินค้า</a></li>
-        <li><a href="#contact" class="middle">Contact</a></li>
+      <li><a href="{%url 'home'%}"><img src="{% static 'images/logo.png' %}" alt="logo" style="height: 3.5rem; "></a></li>
+        <li><a href="{%url 'home' %}" class="middle">สินค้า</a></li>
+        <li><a href="{%url 'contact' %}" class="middle">Contact</a></li>
+        <!-- ขวา -->
         <button style="float:right; margin-right: 2%; width: 5rem;" class="button"><a href="login" style="color: white;">login</a></button>
         <li style="float: right; margin-right: 2%;" class="nav-item">
           <a class="text-black show display-7" href="{%url 'cart' %}">

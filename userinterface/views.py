@@ -8,12 +8,15 @@ from .models import product as Product
 # Create your views here.
 def home(req):
     obj = product.objects.all()
-    return render(req,"home.html",{"product":obj})
+    sorted_items = sorted(obj, key=lambda x: (x.stock == 0, x.stock))
+    return render(req,"home.html",{"product":sorted_items})
 
 def detail(req,id):
     obj = product.objects.get(pk=id)
     return render(req,"product_details.html",{"product":obj})
 
+def contact(req):
+    return render(req,'contact.html')
 
 def stock(req):
     product = Product.objects.all()

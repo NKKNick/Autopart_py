@@ -9,7 +9,9 @@ class Order(models.Model):
     total = models.IntegerField()
     customer = models.ForeignKey(User,on_delete=models.CASCADE,default=None)
     created = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self) -> str:
+        return f'{self.customer.username}'
+    
 class OrderDetail(models.Model):
     product = models.CharField(max_length=255)
     price = models.IntegerField()

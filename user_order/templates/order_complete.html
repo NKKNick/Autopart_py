@@ -1,0 +1,21 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% block title %} kuy {% endblock %}
+
+{% block content %}
+    <section class="container my-5">
+        <br><br><br><br>
+        <div class="text-center">
+            <img src="{% static 'images/thanks.jpg' %}" alt="thanks">
+            <br>
+            <h1 class="my-4"><strong>สั่งซื้อสินค้าเรียบร้อยแล้ว</strong></h1>
+            <div class="mbr-section-btn pt-3">
+                <a href="{%url 'home' %}" class="btn btn-primary display-4">
+                    <i class="bi bi-house-door"></i>&nbsp;
+                    ดูออเดอร์ของคุณ
+                </a>
+            </div>
+            <br><br>
+        </div>
+   </section>
+{% endblock %}

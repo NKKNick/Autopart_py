@@ -1,25 +1,7 @@
 {% extends 'navbar.html' %}
 {% load humanize %}
+{% load static %}
 {% block content %}
-{% if count <= 0 %}
-<section class="container my-5">
-    <br><br><br><br>
-    <div class="text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="img-fluid" style="width: 200px; height: 200px; margin-left: auto; margin-right: auto" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-        </svg>
-        <br>
-        <h1 class="my-4"><strong>ไม่มีสินค้าในตะกร้า</strong></h1>
-        <div class="mbr-section-btn pt-3">
-            <a href="{% url 'home' %}" class="btn btn-primary display-4">
-                &nbsp;
-                เพิ่มสินค้าเลย&nbsp;
-            </a>
-        </div>
-        <br><br>
-    </div>
-</section>
-{% else %}
 <section class="h-100 h-custom my-5">
     <div class="container py-5 h-100 my-5">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -27,7 +9,7 @@
                 <div class="card card-registration card-registration-2" style="border-radius: 15px; background-color:#fafafa">
                     <div class="card-body p-0">
                         <div class="row g-0">
-                            <div class="col-lg-7">
+                            <div class="col-lg-5">
                                 <div class="p-5">
                                     <!-- สินค้าในตะกร้า -->
                                     <div class="d-flex justify-content-between align-items-center mb-5">
@@ -53,27 +35,20 @@
                                         </div>
                                     <hr class="my-4">
                                     {% endfor %}
+                                    <h5 class="text-uppercase">ยอดชำระเงินรวม</h5>
+                                        <h5>{{total | intcomma}} บาท</h5>
                                 </div>
                             </div>
                 
-                            <div class="col-lg-5 bg-grey">
+                            <div class="col-lg-7 bg-grey">
                                 <div class="p-5">
-                                    <h4 class="fw-bold mb-5 mt-0 pt-0">สรุปคำสั่งซื้อ</h4>
-                                    <hr class="my-4">
+                                    <h4 class="fw-bold mb-5 mt-0 pt-0 text-center">แผนที่</h4>
+                                    <hr>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <h5 class="text-uppercase">ยอดชำระเงินรวม</h5>
-                                        <h5>{{total | intcomma}} บาท</h5>
+                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d44829.45759189337!2d104.83762149293747!3d15.235050697146468!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3116871f004b5055%3A0x3ec7937c3a0fac1a!2z4Lib4Lij4Liw4Liq4Li04LiX4LiY4Li04LmM4Lii4LiZ4LiV4LmMLeC4reC4sOC5hOC4q-C4peC5iOC4o-C4luC4ouC4meC4leC5jA!5e0!3m2!1sth!2sth!4v1705744681182!5m2!1sth!2sth" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                     </div>
-                                    <form action="{%url 'deliver' %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="radio" id="send" name="deli_se" value="sendhome">
-                                        <label for="send" class="mb-3">ส่งไปยังบ้านคุณ</label><br>
-                                        <input type="radio" id="take" name="deli_se" value="pickup">
-                                        <label for="take" class="mb-5">รับที่ร้าน</label><br>
-                                            <button type="submit" class="btn btn-primary w-100 text-center" data-mdb-ripple-color="dark">
-                                                ดำเนินการ
-                                            </button>
-                                      </form>
+                                    <hr>
+                                    <h5>บ้านเลขที่ 12 ถนน อุบล-ตระการ จังหวัดอุบลราชธานี ตำบลในเมือง อำเภอเมือง</h5>
                                 </div>
                             </div>
                         </div>
@@ -84,5 +59,4 @@
     </div>
     <br><br>
 </section>
-{% endif %}
 {% endblock %}

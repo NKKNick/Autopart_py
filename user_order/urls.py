@@ -4,5 +4,7 @@ from user_order import views
 
 
 urlpatterns = [
-    path("hello",views.hello)
+    path("order",views.order,name='order'),
+    path("pickup",views.pickup,name='pickup'),
+    path("order/complete",views.order_complete,name='orderC'),
 ] 

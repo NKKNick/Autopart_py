@@ -22,14 +22,8 @@ def cart(request):
     except CartDetail.DoesNotExist:
         cart = None
         cart_detail = None
+
     return render(request, "cart.html", {'count': count, 'total': total, 'cartDetail': cart_detail})
-
-
-def create_cart(req):
-    cart = req.session.session_key
-    if not cart:
-        cart.req.session.create()
-    return cart
 
 @login_required(login_url="/login")
 def add_cart(req, id):
@@ -63,3 +57,14 @@ def delete_cart(req,id):
     cartDetail=CartDetail.objects.get(product=product,cart=cart)
     cartDetail.delete()
     return redirect("/cart")
+
+@login_required(login_url="/login")
+def deliver(req):
+    if req.method == 'POST':
+        deliver = req.POST.get('deli_se')
+        if deliver == "sendhome":
+            return redirect('/order')
+        elif deliver == "pickup":
+            return redirect('/pickup')
+        else:
+            return redirect('/cart')
