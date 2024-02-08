@@ -1,8 +1,11 @@
 {% extends "navbar.html" %}
 {% load humanize %}
-
+{% load static %}
 {% block title %}
 หน้าแรก
+{% endblock %}
+{% block import %}
+<link rel="stylesheet" href="{%static 'asset/popup/popup.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,8 +16,8 @@
     {% for i in product %}
       <div class="col-sm-auto my-3" style="margin-left:5rem; ">
         <div class="card" style="width: 20rem; height: 30rem;">
-          <a href="{%url 'detail' i.id %}">
-            <img class="card-img-top " src="{{i.picture.url}}" alt="product" style="height: 18rem;"></a>
+          <a href="{%url 'detail' i.id %}" class="d-flex justify-content-center">
+            <img class="card-img-top " src="{{i.picture.url}}" alt="product" style="height: 15rem; width: 15rem;"></a>
             <div class="card-body text-center">
               <h5 class="card-title">ชื่อสินค้า: {{i.product_name}}</h5>
               <p class="card-text">ราคา: {{i.price | intcomma}} บาท</p>
@@ -30,5 +33,6 @@
       </div>
     {% endfor %}
     </div>
+    
   </div>
 {% endblock %}

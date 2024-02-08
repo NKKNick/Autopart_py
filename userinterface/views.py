@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from custom.line_notify import send_line_notification
+from user_cart.models import Cart, CartDetail
 from userinterface.models import *
 from .models import product as Product
 

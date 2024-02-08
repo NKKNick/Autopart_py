@@ -1,7 +1,9 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from user_cart.models import *
 from userinterface.models import product as Product
+
 
 
 @login_required(login_url="/login")
@@ -41,6 +43,8 @@ def add_cart(req, id):
             cart_detail.amount += 1
             cart_detail.save()
             return redirect('/')
+        else:
+            return redirect('/cart')
 
     except CartDetail.DoesNotExist:
         cart_detail = CartDetail.objects.create(

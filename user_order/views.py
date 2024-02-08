@@ -1,23 +1,27 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from custom.check_order import user_is_order
+
 from user_order.models import *
 from user_cart.models import Cart,CartDetail
 from userinterface.models import product as Product
 # Create your views here.
+
+    
 @login_required(login_url="/login")
 def order(req):
-    if req.method == "POST":
-        fullname = req.POST['fullname']
-        phone = req.POST['phone']
-        address = req.POST['address']
-        cart = Cart.objects.get(customer=req.user)
-        cartOb = CartDetail.objects.filter(cart=cart)
-        total = 0
-        for i in cartOb:
-            total += i.product.price * i.amount
-        if total <= 0:
-            return HttpResponse('ไม่สามารถเข้าถึงหน้านี้ได้')
+    if user_is_order(user=req.user):
+        if req.method == "POST":
+            fullname = req.POST['fullname']
+            phone = req.POST['phone']
+            address = req.POST['address']
+            cart = Cart.objects.get(customer=req.user)
+            cartOb = CartDetail.objects.filter(cart=cart)
+            total = 0
+
+            for i in cartOb:
+                total += i.product.price * i.amount
         else:
             order = Order.objects.create(
                 fullname=fullname,
@@ -41,10 +45,20 @@ def order(req):
                 product.stock = int(i.product.stock - order_detail.amount)
                 product.save()
                 i.delete()
-            cart.delete
+            cart.delete()
         return render(req,'order_complete.html')
+    else:
+        return render(req,'order.html')
 
-    return render(req,'order.html')
+
+@login_required(login_url="/login")
+def order_detail(req,id):
+    order = Order.objects.get(pk=id)
+    if order.customer == req.user:
+        obj=OrderDetail.objects.filter(order=order)
+        return render(req,'orderdetails.html',{'orders':obj,'order':order})
+    else:
+        redirect("order/history")
 
 @login_required(login_url="/login")
 def pickup(req):
@@ -70,3 +84,8 @@ def pickup(req):
 @login_required(login_url="/login")
 def order_complete(req):
     return render(req,'order_complete.html')
+
+@login_required(login_url="/login")
+def order_history(req):
+    orders=Order.objects.filter(customer=req.user)
+    return render(req,"order_history.html",{"orders":orders})

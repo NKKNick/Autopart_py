@@ -17,6 +17,8 @@ class OrderDetail(models.Model):
     price = models.IntegerField()
     amount = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
-    order = models.ForeignKey(Order,on_delete=models.CASCADE,)
+    order = models.ForeignKey(Order,on_delete=models.CASCADE)
+    def sum(self):
+        return self.price * self.amount
     
 
