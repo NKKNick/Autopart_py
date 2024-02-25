@@ -1,0 +1,56 @@
+{% extends 'sidebar.html' %}
+{% load humanize %}
+{% block title %}หน้า admin {% endblock %}
+{% block content %}
+    <div class="my-5 container text-center" style="width: 100%;">
+        <div class="row">
+            <h1 >คำสั่งซื้อ</h1>
+            <div class="mt-5">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">รหัสคำสั่งซื้อ</th>
+                        <th scope="col">ชื่อ</th>
+                        <th scope="col">เบอร์โทรศัพท์</th>
+                        <th scope="col">สถานะ</th>
+                        <th scope="col">เงิน</th>
+                        <th scope="col">วันที่</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in order %}
+                    <form action="{%url 'dash_status' i.id %}" method="post">
+                        {% csrf_token %}
+                      <tr>
+                        <th scope="row">{{i.id}}</th>
+                        <td>{{i.fullname}}</td>
+                        <td>{{i.phone}}</td>
+                        <td style="width: 15%;" >
+                            <select name="status" class="form-select" aria-label="Default select example">
+                                <option selected>{{i.get_status_display}}</option>
+                                <option value="3">กำลังเตรียมสินค้า</option>
+                                <option value="4">กำลังนำสินค้าไปส่ง</option>
+                                <option value="5">ทำการส่งเรียบร้อย</option>
+                                <option value="6">ผู้ใช้รับสินค้าแล้ว</option>
+                                <option value="7">ยกเลิกคำสั่งซื้อ</option>
+                                <option value="8">สลิปไม่ถูกต้อง</option>
+                            </select>
+                        </td>
+                        <td>{{i.total}}</td>
+                        <td>{{ i.created|date:"H:i d / m / Y" }}</td>
+                        <td><a href="{%url 'dash_detail' i.id %}" class="btn btn-primary">รายละเอียด</a></td>
+                        <td><button type="submit" class="btn btn-warning">อัพเดทสถานะ</button></td>
+                      </tr>
+                    </form>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

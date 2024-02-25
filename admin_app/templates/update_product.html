@@ -1,0 +1,10 @@
+{% extends 'sidebar.html' %}
+
+{% block content %}
+
+<form action="{%url 'product_update' product.id %}" method="post">
+{% csrf_token %}
+{{form.as_p}}
+<button type="submit">ok</button>
+</form>
+{% endblock %}

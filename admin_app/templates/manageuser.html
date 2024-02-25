@@ -1,0 +1,22 @@
+{% extends 'sidebar.html' %}
+
+{% block title %}จัดการผู้ใช้{% endblock %}
+
+{% block content %}
+<div class="container-sm my-5">
+    <div class="my-1">
+        <h2>จัดการผู้ใช้</h2>
+    </div>
+{% for i in users %}
+
+
+
+{{i.username}}
+{{i.email}}
+
+
+
+{% endfor %}
+</div>
+
+{% endblock %}

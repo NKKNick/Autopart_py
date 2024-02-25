@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block content %}
 {% if not orders %}
-<section class="container my-5">
+<section class="container" style="margin-top: 10%;">
     <br><br><br><br>
     <div class="text-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="img-fluid" style="width: 200px; height: 200px; margin-left: auto; margin-right: auto" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
@@ -23,7 +23,7 @@
 </section>
 {% else %}
 <section>
-    <div class="container my-5">
+    <div class="container" style="margin-top: 10%;">
         <div class="mbr-section-head">
             <h4 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
                 <strong>ประวัติการซื้อ</strong>
@@ -36,6 +36,7 @@
                     <th scope="col">รหัสใบสั่งซื้อ</th>
                     <th scope="col">วันสั่งซื้อสินค้า</th>
                     <th scope="col">ยอดชำระเงิน</th>
+                    <th scope="col">สถานะ</th>
                     <th scope="col">ดูรายละเอียด</th>
                   </tr>
                 </thead>
@@ -45,6 +46,11 @@
                         <th scope="row">{{i.id}}</th>
                         <td>{{i.created | date:'d/n/Y'}}</td>
                         <td>{{i.total | intcomma }}</td>
+                        {% if i.status == "1" %}
+                        <td><a href="{%url 'payment' i.id %}">{{i.get_status_display}}</a></td>
+                        {% else %}
+                        <td>{{i.get_status_display}}</td>
+                        {% endif %}
                         <td>
                             <a href="{%url 'orderDetail' i.id %}">รายละเอียด</a>
                         </td>

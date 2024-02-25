@@ -3,6 +3,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from custom.check_order import user_is_order
 
+from django.contrib.auth.models import User
+from custom.line_notify import send_image
 from user_order.models import *
 from user_cart.models import Cart,CartDetail
 from userinterface.models import product as Product
@@ -19,10 +21,8 @@ def order(req):
             cart = Cart.objects.get(customer=req.user)
             cartOb = CartDetail.objects.filter(cart=cart)
             total = 0
-
             for i in cartOb:
                 total += i.product.price * i.amount
-        else:
             order = Order.objects.create(
                 fullname=fullname,
                 phone = phone,
@@ -34,22 +34,42 @@ def order(req):
             #save order_detail และ ลดสต็อก
             for i in cartOb:
                 order_detail = OrderDetail.objects.create(
-                    product=i.product.product_name,
+                    product=i.product,
                     amount = i.amount,
                     price = i.product.price,
                     order = order,
                 )
                 order_detail.save()
                 #ลดสต็อก
+                '''
                 product = Product.objects.get(pk=i.product.id)
                 product.stock = int(i.product.stock - order_detail.amount)
                 product.save()
+                '''
                 i.delete()
             cart.delete()
-        return render(req,'order_complete.html')
-    else:
+            return redirect('/order/payment/%d'%order.id)
         return render(req,'order.html')
+    return redirect('/')
 
+def payment(req,id):
+    order=Order.objects.get(pk=id)
+    if req.method == "POST":
+        image = req.FILES.get('payment')
+        payment = Payment.objects.create(
+            image=image,
+            order=order,
+        )
+        payment.save()
+        #เปลี่ยน status จาก "ยังไม่ได้ชำระ" เป็น "ตรวจสอบสลิป"
+        order.status = "2"
+        order.save()
+        message = f'\nผู้ซื้อ: {order.fullname}\nที่อยู่: {order.address}\nเบอร์ติดต่อ: {order.phone}\nจำนวนเงินที่ต้องชำระ: {order.total}'
+        payment_url = payment.image.url.replace('/','',1)
+        image_path = payment_url     
+        send_image(message,image_path)
+        return redirect('/order/history')
+    return render(req,'payment.html',{'order':order})
 
 @login_required(login_url="/login")
 def order_detail(req,id):

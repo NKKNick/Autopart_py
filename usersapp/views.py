@@ -13,6 +13,8 @@ def login(req):
             user = auth.authenticate(username=username,password=password)
             if user is not None:
                 auth.login(req,user)
+                if user.has_perm('admin'):
+                    return redirect('/dashboard')
                 return redirect('/')
             else:
                 messages.warning(req,"ไม่พบบัญชีผู้ใช้")
@@ -42,7 +44,7 @@ def register(req):
                 )
                 user.save()
                 messages.success(req,'สร้างผู้ใช้เรียบร้อย')
-                return redirect("/register")
+                return redirect("/login")
     return render(req,'register.html')
 def logout(req):
     auth.logout(req)

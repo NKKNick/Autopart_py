@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from custom.line_notify import send_line_notification
+from custom.line_notify import send_text
 from user_cart.models import Cart, CartDetail
 from userinterface.models import *
 from .models import product as Product
@@ -24,5 +24,13 @@ def stock(req):
     for i in product:
         if i.stock <= 0:
             message = f"{i.product_name} เหลือ {i.stock}"
-            send_line_notification(message)
+            send_text(message)
     return render(req, 'testnot.html')
+
+def search_product(req):
+    search = req.GET['search']
+    if search:
+        product = Product.objects.filter(product_name__contains=search)
+        return render(req,'search_product.html',{'product':product})
+    else:
+        return redirect('/')

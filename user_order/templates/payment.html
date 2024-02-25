@@ -1,0 +1,41 @@
+{% extends 'navbar.html' %}
+{% block title %}ชำระเงิน {% endblock %}
+{% block import %}
+
+
+{% endblock %}
+
+{% block content %}
+<section class="container-md py-5 my-5 d-flex justify-content-center" style="height: 50rem;">
+    <div class="h-100 w-75 border rounded shadow" style="background-color: #e9e9e9;">
+        <div class="mt-5">
+            <div class="d-flex justify-content-center">
+                <div class>
+                    <p class="text-center" >ยอดที่ต้องชำระ: {{order.total}}</p>
+                    <p class="text-center">กรุณาชำระภายใน 24 ชั่วโมง</p>
+                    <div class="text-center">
+                        <img class="" src="https://promptpay.io/0972080499/{{orders.total}}.png" alt="slip">
+                    </div>
+    
+                    <p class="mt-4 text-center">ทำตามขั้นตอนต่อไปนี้</p>
+                    <p>1.ทำการเปิดแอปธนาคาร</p>
+                    <p>2.เลือกไปที่ปุ่ม "แสกน QR CODE"</p>
+                    <p>3.หลังจากชำระเงินเสร็จสิ้นกรุณาทำการบันทึกสลิป</p>
+                    <p>4.ทำการอัพโหลดสลิปในปุ่มด้านล่าง</p>
+                    <div>
+                        <form action="{%url 'payment' order.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="file" name="payment" accept="payment/*" required>
+                            <div class="d-flex  justify-content-center">
+                            <button type="submit" class="d-block btn btn-primary mt-4 w-25" style="background-color: #a4db74; color:black">
+                                ต่อไป
+                            </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

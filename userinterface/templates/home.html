@@ -5,34 +5,38 @@
 หน้าแรก
 {% endblock %}
 {% block import %}
-<link rel="stylesheet" href="{%static 'asset/popup/popup.css' %}">
+<style>
+  .layout-top{
+    margin-top: 10%;
+    margin-bottom: 10%;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-
-<h1 class="text-center mb-4" style="margin:10px;">สินค้าทั้งหมด</h1>
-<div class="container">
+<section >
+  <div class="container" style="margin-top: 10%;">
     <div class="row">
-    {% for i in product %}
-      <div class="col-sm-auto my-3" style="margin-left:5rem; ">
-        <div class="card" style="width: 20rem; height: 30rem;">
-          <a href="{%url 'detail' i.id %}" class="d-flex justify-content-center">
-            <img class="card-img-top " src="{{i.picture.url}}" alt="product" style="height: 15rem; width: 15rem;"></a>
-            <div class="card-body text-center">
-              <h5 class="card-title">ชื่อสินค้า: {{i.product_name}}</h5>
-              <p class="card-text">ราคา: {{i.price | intcomma}} บาท</p>
-              {% if i.stock <= 0 %}
-              <br>
-              <h2 style="color: red;">สินค้าหมด</h2>
-              {% else %}
-              <p class="card-text">จำนวนคงเหลือ: {{i.stock}}</p>
-              <a href="{%url 'addcart' i.id %}" class="btn btn-primary" style="background-color: #a4db74; color:black">เพิ่มลงตระกร้า</a>
-              {% endif %}
+        <!-- Product 1 -->
+        {% for i in product %}
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{{i.picture.url}}" style="width: auto; height: 250px;" class="card-img-top object-fit-cover" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title">{{i.product_name}}</h5>
+                    <p class="card-text">ราคา: {{i.price}} ฿ 
+                      <br>คงเหลือ: {{i.stock}} ชิ้น</p>
+                    {% if i.stock <= 0 %}
+                    <a href="#" class="btn btn-secondary border-0">สินค้าหมด</a>
+                    {% else %}
+                    <a href="{%url 'addcart' i.id %}" class="btn btn-primary border-0" style="background-color: #55C2C3">เพิ่มลงตระกร้า</a>
+                    {% endif %}
+                </div>
             </div>
-          </div>
+        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
-    </div>
-    
   </div>
+</section>
+
 {% endblock %}

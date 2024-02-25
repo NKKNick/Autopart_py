@@ -4,5 +4,6 @@ from worker_app import views
 
 
 urlpatterns = [
-    path("work",views.assign_work),
+    path("repair",views.assign_work,name="assign_work"),
+    path("work/display",views.display_work,name="display_work"),
 ] 

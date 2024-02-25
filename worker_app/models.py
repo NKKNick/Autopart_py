@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+
 class Worker(models.Model):
     firstname = models.CharField(max_length=255,blank=True)
     lastname = models.CharField(max_length=255,blank=True)
@@ -10,24 +11,30 @@ class Worker(models.Model):
 
     def __str__(self) -> str:
         return f'{self.worker}'
-    
-class Work(models.Model):
-    worker_id = models.ForeignKey(Worker,on_delete=models.CASCADE)
-    customer_id = models.ForeignKey(User,on_delete=models.CASCADE)
-    def __str__(self):
-        return f'{self.worker_id}'
 
-class WorkDetail(models.Model):
-    work_id = models.ForeignKey(Work,on_delete=models.CASCADE)
+class WorkRequest(models.Model):
+    customer = models.ForeignKey(User,on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=255,blank=True)
+    lastname = models.CharField(max_length=255,blank=True)
     car_part = models.CharField(max_length=255,blank=True)
-    start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField(null=True,blank=True)
-    wating = 0
-    reparing = 1
-    done = 2
-    STATUS_CHOICES = (
-        (wating, 'Wating'),
-        (reparing, 'Reparing'),
-        (done, 'Done'),
+    car_brand = models.CharField(max_length=255,blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+    def __str__(self) -> str:
+        return f'{self.customer}'
+    
+
+WORK_CHOICE = (
+        ("1", 'รอรับอะไหล่'),
+        ("2", 'กำลังซ่อม'),
+        ("3", 'ซ่อมเสร็จสิ้น'),
         )
-    status = models.SmallIntegerField(choices=STATUS_CHOICES,blank=True,default=wating)
+
+class AssignWork(models.Model):
+    work_request = models.ForeignKey(WorkRequest, on_delete=models.CASCADE)
+    worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20,choices= WORK_CHOICE,default=1)
+    def __str__(self) -> str:
+        return f'{self.worker}'
