@@ -1,10 +1,42 @@
 {% extends 'sidebar.html' %}
 
 {% block content %}
-
-<form action="{%url 'product_update' product.id %}" method="post">
-{% csrf_token %}
-{{form.as_p}}
-<button type="submit">ok</button>
-</form>
+<div class="my-5 px-5 container text-center" style="width: 100%;">
+    <div class="row py-5 px-5 rounded shadow bg-light" >
+        <h1 >แก้ไขข้อมูลสินค้า</h1>
+        <div class="mt-5">
+          <form class="row g-3 text-start" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+              <div class="col-12">
+                <label for="product_name" class="form-label">ชื่อสินค้า</label>
+                <input type="text" class="form-control" id="product_name" name="product_name" value="{{form.instance.product_name}}">
+              </div>
+              <div class="col-12">
+                <label for="inputAddress" class="form-label">แบรนด์</label>
+                <input type="text" class="form-control" name="brand" id="inputAddress" value="{{form.instance.brand}}">
+              </div>
+              <div class="col-12">
+                <label for="inputAddress2" class="form-label">ราคา</label>
+                <input type="text" class="form-control" name="price" id="inputAddress2" value="{{form.instance.price}}">
+              </div>
+              <div class="col-12">
+                <label for="inputAddress2" class="form-label">จำนวน</label>
+                <input type="text" class="form-control" name="stock" id="inputAddress2" value="{{form.instance.stock}}">
+              </div>
+              <div class="col-12">
+                <label for="inputAddress2" class="form-label">คำอธิบาย</label>
+                <textarea class="form-control" id="inputAddress2" name="description" >{{form.instance.description}}</textarea>
+              </div>
+              <div class="mb-3">
+                <label for="formFile" class="form-label">รูปภาพของสินค้า</label>
+                <input class="form-control" type="file" id="formFile" name="picture" value="{{form.instance.product_name}}">
+                <img src="{{form.instance.picture.url}}" alt="">
+              </div>
+              <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary" style="width: 25%;">เพิ่มสินค้า</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
 {% endblock %}

@@ -11,6 +11,9 @@ def dashboard(req):
     order=Order.objects.order_by('-created')
     return render(req,'admin_order.html',{"order":order})
 
+
+
+#order function
 @permission_required("admin",login_url="/")
 def update_order(req,id):
     order = Order.objects.get(pk=id)
@@ -52,11 +55,16 @@ def cancel_order(req,id):
     order.save()
     return redirect('/dashboard')
 
+
+#manage user function
 @permission_required('admin' ,login_url="/")
 def manage_user(req):
     user = User.objects.all()
-    return render(req,'manageuser.html',{'users':user})
+    return render(req,'manage_user.html',{'users':user})
 
+
+
+#product function
 @permission_required('admin' ,login_url="/")
 def admin_product(req):
     product = Product.objects.all()

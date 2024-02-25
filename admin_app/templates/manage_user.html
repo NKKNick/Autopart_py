@@ -1,0 +1,32 @@
+{% extends 'sidebar.html' %}
+
+{% block title %}จัดการผู้ใช้{% endblock %}
+
+{% block content %}
+<div class="container-sm my-5">
+    <div class="my-1 mx-4">
+        <h2>จัดการผู้ใช้</h2>
+        <a href="#">เพิ่มผู้ใช้</a>
+        <div class="row gap-3">
+        {% for i in users %}
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{i.email}}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">{{i.username}}</h6>
+              {% if i.is_superuser %}
+              <p class="card-text">Roles: admin</p>
+              {% elif i.is_staff %}
+              <p class="card-text">Roles: staff</p>
+              {% else %}
+              <p class="card-text">Roles: ผู้ใช้ทั่วไป</p>
+              {% endif %}
+              <a href="#" class="card-link">แก้ไขข้อมูลผู้ใช้</a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

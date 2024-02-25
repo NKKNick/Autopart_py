@@ -36,6 +36,9 @@ def register(req):
             if User.objects.filter(username=username).exists():
                 messages.warning(req,"ชื่อผู้ใช้นี้มีอยู่แล้ว")
                 return redirect("/register")
+            elif User.objects.filter(email=email).exists():
+                messages.warning(req,"อีเมลนี้ถูกใช้แล้ว")
+                return redirect("/register")
             else:
                 user=User.objects.create_user(
                     username=username,
