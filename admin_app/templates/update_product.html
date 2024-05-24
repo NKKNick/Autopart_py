@@ -20,6 +20,10 @@
                 <input type="text" class="form-control" name="price" id="inputAddress2" value="{{form.instance.price}}">
               </div>
               <div class="col-12">
+                <label for="inputAddress2" class="form-label">ต้นทุน</label>
+                <input type="text" class="form-control" name="cost" id="inputAddress2" value="{{form.instance.cost}}">
+              </div>
+              <div class="col-12">
                 <label for="inputAddress2" class="form-label">จำนวน</label>
                 <input type="text" class="form-control" name="stock" id="inputAddress2" value="{{form.instance.stock}}">
               </div>
@@ -30,7 +34,7 @@
               <div class="mb-3">
                 <label for="formFile" class="form-label">รูปภาพของสินค้า</label>
                 <input class="form-control" type="file" id="formFile" name="picture" value="{{form.instance.product_name}}">
-                <img src="{{form.instance.picture.url}}" alt="">
+                <img style="width: 300px; height: 250px;" src="{{form.instance.picture.url}}" alt="">
               </div>
               <div class="col-12 text-center">
                 <button type="submit" class="btn btn-primary" style="width: 25%;">เพิ่มสินค้า</button>

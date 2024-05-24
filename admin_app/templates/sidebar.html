@@ -33,10 +33,20 @@
           </a>
           <hr>
           <ul class="nav nav-pills flex-column mb-auto">
-            {% if order != none %}
+            {% if request.get_full_path == "/dashboard/report" %}
+            <li class="nav-item">
+              <a href="{%url 'dashboard' %}" class="nav-link text-white" aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                <i class="bi bi-receipt-cutoff"></i>&nbsp;
+                คำสั่งซื้อสินค้า
+              </a>
+            </li>
+            {% elif order != none %}
             <li class="nav-item">
               <a href="{%url 'dashboard' %}" class="nav-link active" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                <i class="bi bi-receipt-cutoff"></i>&nbsp;
+
                 คำสั่งซื้อสินค้า
               </a>
             </li>
@@ -44,20 +54,74 @@
             <li class="nav-item">
               <a href="{%url 'dashboard' %}" class="nav-link text-white" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                <i class="bi bi-receipt-cutoff"></i>&nbsp;
                 คำสั่งซื้อสินค้า
               </a>
             </li>
             {% endif %}
+            {% if request.get_full_path == "/dashboard/report" %}
             <li>
-              <a href="#" class="nav-link text-white">
+              <a href="{%url 'work_display' %}" class="nav-link text-white">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                ตารางงานช่าง
+                <i class="bi bi-wrench"></i>
+                &nbsp;รายการส่งซ่อม
               </a>
             </li>
-            {% if product != none %}
+            {% elif worker != none %}
+            <li>
+              <a href="{%url 'work_display' %}" class="nav-link active">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <i class="bi bi-wrench"></i>
+                &nbsp;รายการส่งซ่อม
+              </a>
+            </li>
+            {% elif request.get_full_path == "/dashboard/repair" %}
+            <li>
+              <a href="{%url 'work_display' %}" class="nav-link active">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <i class="bi bi-wrench"></i>
+                &nbsp;รายการส่งซ่อม
+              </a>
+            </li>
+            {% else %}
+            <li>
+              <a href="{%url 'work_display' %}" class="nav-link text-white">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <i class="bi bi-wrench"></i>
+                &nbsp;รายการส่งซ่อม
+              </a>
+            </li>
+            {% endif %}
+            {% if assign != none %}
+            <li>
+              <a href="{%url 'assign_display' %}" class="nav-link active">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <i class="bi bi-calendar-week"></i>&nbsp;
+                งานทั้งหมด
+              </a>
+            </li>
+            {% else %}
+            <li>
+              <a href="{%url 'assign_display' %}" class="nav-link text-white">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                <i class="bi bi-calendar-week"></i>&nbsp;
+                งานทั้งหมด
+              </a>
+            </li>
+            {% endif %}
+            {% if request.get_full_path == "/dashboard/report" %}
+            <li>
+              <a href="{%url 'admin_product' %}" class="nav-link text-white">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                <i class="bi bi-box2"></i>&nbsp;
+                จัดการสินค้า
+              </a>
+            </li>
+            {% elif product != none %}
             <li>
               <a href="{%url 'admin_product' %}" class="nav-link active">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                <i class="bi bi-box2"></i>&nbsp;
                 จัดการสินค้า
               </a>
             </li>
@@ -65,6 +129,7 @@
             <li>
               <a href="{%url 'admin_product' %}" class="nav-link text-white">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                <i class="bi bi-box2"></i>&nbsp;
                 จัดการสินค้า
               </a>
             </li>
@@ -73,6 +138,7 @@
             <li>
               <a href="{%url 'manage_user' %}" class="nav-link active">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                <i class="bi bi-person-plus-fill"></i>&nbsp;
                 จัดการผู้ใช้
               </a>
             </li>
@@ -80,33 +146,53 @@
             <li>
               <a href="{%url 'manage_user' %}" class="nav-link text-white">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                <i class="bi bi-person-plus-fill"></i>&nbsp;
                 จัดการผู้ใช้
               </a>
             </li>
             {% endif %}
             <li>
-              <a href="#" class="nav-link text-white">
-                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
-                รายงาน
-              </a>
+              {% if request.get_full_path == "/dashboard/report" %}
+              <li>
+                <a href="{%url 'manage_user' %}" class="nav-link active">
+                  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                  <i class="bi bi-clipboard-data"></i>&nbsp;
+                  รายงานผล
+                </a>
+              </li>
+              {% else %}
+              <li>
+                <a href="{%url 'report' %}" class="nav-link text-white">
+                  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                  <i class="bi bi-clipboard-data"></i>&nbsp;
+                  รายงานผล
+                </a>
+              </li>
+              {% endif %}
+
             </li>
           </ul>
           <hr>
           <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="https://github.com/mdo.png" alt="userprofile" width="32" height="32" class="rounded-circle me-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-circle me-2" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+              </svg>
               <strong>{{user}}</strong>
             </a>
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-              <li><a class="dropdown-item" href="#">New project...</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{%url 'pos' %}">ระบบขายหน้าร้าน</a></li>
+              {%if request.user.is_superuser %}
+              <li><a class="dropdown-item" href="{%url 'home' %}">หน้าหลัก</a></li>
+              <li><a class="dropdown-item" href="{%url 'work_calendar' %}">หน้า worker</a></li>
+              {% endif %}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{%url 'logout' %}">Sign out</a></li>
             </ul>
           </div>
         </div>
-    
+  
             {% block content %}
     
     

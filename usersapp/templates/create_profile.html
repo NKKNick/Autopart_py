@@ -1,0 +1,75 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{%block title %}สร้างโปรไฟล์{% endblock %}
+
+{% block content %}
+<div class="container-sm w-100 h-100 py-5">
+    <div class="d-flex justify-content-center">
+      <h2>กรอกข้อมูลผู้ใช้</h2>
+    </div>
+        <div class="d-flex justify-content-center px-5">
+            <form class="row g-3" method="POST" action="{%url 'user_profile' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="d-flex justify-content-center my-3 py-3" id="sample_img">
+                  <div class="btn-group gap-5" role="group" aria-label="Basic radio toggle button group">
+                    <label class="btn btn-outline-dark rounded-1" for="btnradio1" style="width: 14rem;">
+                        <i class="bi bi-person-bounding-box" style="font-size: 100px;"></i>
+                    </label>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <div id="imagePreview" class="mt-2" style="width: 14rem;"></div>
+                </div>
+                
+                <label for="user_avatar"></label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required onchange="previewImage(event)">      
+
+                <div class="col-md-6">
+                  <label for="firstname" class="form-label">ชื่อ</label>
+                  <input type="text" class="form-control" name="firstname" id="firstname">
+                </div>
+                <div class="col-md-6">
+                  <label for="lastname" class="form-label">นามสกุล</label>
+                  <input type="text" class="form-control" name="lastname" id="lastname">
+                </div>
+                <div class="col-md-12">
+                  <label for="lastname" class="form-label">เบอร์โทรศัพท์<small class="text-secondary">(กรอกเบอร์ตามแจ้งซ่อมเพื่อดูสถานะ)</small></label>
+                  <input type="text" class="form-control" name="phone" id="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">ที่อยู่</label>
+                    <input class="form-control" id="exampleFormControlTextarea1" name="address">
+                </div>
+                <div class="col-12 py-3">
+                  <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                </div>
+              </form>
+        </div>
+    </div>
+</div>
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('imagePreview');
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            const img = document.createElement('img');
+            img.src = reader.result;
+            img.classList.add('mt-2','rounded');
+            img.style.cssText += 'width:100%';
+            preview.innerHTML = '';
+            preview.appendChild(img);
+            const sample = document.getElementById("sample_img");
+            sample.remove();
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '';
+        }
+    }
+</script>
+{% endblock %}

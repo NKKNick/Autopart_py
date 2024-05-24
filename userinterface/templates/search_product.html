@@ -26,8 +26,12 @@
                     <img src="{{i.picture.url}}" style="width: auto; height: 250px;" class="card-img-top object-fit-cover" alt="Product Image">
                     <div class="card-body">
                         <h5 class="card-title">{{i.product_name}}</h5>
-                        <p class="card-text">$19.99</p>
-                        <a href="#" class="btn btn-primary border-0" style="background-color: #55C2C3">Add to Cart</a>
+                        <p class="card-text">ราคา {{i.price}} ฿
+                            <br>
+                            คงเหลือง {{i.stock}}
+                        </p>
+
+                        <a href="{%url 'addcart' i.id %}" class="btn btn-primary border-0" style="background-color: #55C2C3">เพิ่มลงตระกร้า</a>
                     </div>
                 </div>
             </div>

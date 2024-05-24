@@ -1,0 +1,89 @@
+{% extends 'sidebar.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-5">ระบบขายหน้าร้าน</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">สินค้า</h5>
+                    <div class="row">
+                    {% for i in products %}
+                        <div class="card col-3">
+                            <img src="{{i.picture.url}}" style="width: auto; height: 250px;" class="card-img-top object-fit-cover" alt="Product Image">
+                            <div class="card-body">
+                                <h5 class="card-title">{{i.product_name}}</h5>
+                                <p class="card-text">ราคา: {{i.price | intcomma}} ฿ 
+                                  <br>คงเหลือ: {{i.stock}} ชิ้น</p>
+                                {% if i.stock <= 0 %}
+                                <a href="#" class="btn btn-secondary border-0">สินค้าหมด</a>
+                                {% else %}
+                                <a href="{%url 'admin_cart' i.id %}" class="btn btn-primary border-0">เพิ่มลงตระกร้า</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">รายการสินค้า</h5>
+                    <hr>
+                    <ul class="list-group">
+                        {% for i in cart %}
+                        <div>
+                            <div class="row mx-3" style="background-color: #eceff1;">
+                                <div class="col-3 py-3">
+                                    <img class="rounded" src="{{i.product.picture.url}}" alt="" width="60px" >
+                                </div>
+                                <div class="col py-3">
+                                    <div class=""><small>{{i.product.product_name}}</small></div>
+                                    <div><small>ราคา:{{i.product.price |intcomma}}</small></div>
+                                </div>
+                                <div class="col py-3">
+
+                                </div>
+                                <div class="col d-flex justify-content-end align-items-center">
+                                    <a href="{%url 'pos_dec' i.id %}" class="btn btn-outline-dark btn-sm me-2"><i class="bi bi-dash"></i></a>
+                                    <div type="text" class="form-control form-control-sm text-center">{{i.amount}}</div>
+                                    <a href="{%url 'pos_inc' i.id %}" class="btn btn-outline-dark btn-sm ms-2"><i class="bi bi-plus"></i></a>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr>
+                        {% endfor %}
+                    </ul>
+                    <hr>
+                    <h5>Total: {{ total | intcomma }} ฿</h5>
+                    <button class="btn btn-success btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">รายละเอียด</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% for i in cart %}
+          <div>{{i.product.product_name}} x{{i.amount}}</div>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">ยืนยัน</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

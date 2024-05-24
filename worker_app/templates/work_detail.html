@@ -1,0 +1,97 @@
+{% extends 'nav_worker.html' %}
+
+{% block content %}
+<section>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">รายละเอียดของงาน</h5>
+                    </div>
+                    <div class="card-body">
+                        <div><h5>สินค้าที่ส่งซ่อม</h2></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="workName">อะไหล่:</label>
+                                    <input type="text" id="workName" class="form-control" readonly value="{{assign.work_request.car_part}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="description">ยี่ห้อ:</label>
+                                    <input type="text" id="workName" class="form-control" readonly value="{{assign.work_request.car_brand}}">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">สถานะ:</label>
+                            <input type="text" id="status" class="form-control" readonly value="{{assign.get_status_display}}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="startDate">วันที่เพิ่ม:</label>
+                            <input type="text" id="startDate" class="form-control" readonly value="{{assign.start_date | date:'d / m / Y' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">วันที่ครบกำหนด:</label>
+                            <input type="text" id="endDate" class="form-control" readonly value="{{assign.end_date | date:'d / m / Y' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="worker">หมายเหตุ:</label>
+                            {% if assign.work_request.note == None %}
+                            <textarea class="form-control" name="worker" id="worker" readonly></textarea>
+                            {% else %}
+                            <textarea class="form-control" name="worker" id="worker" readonly>{{assign.work_request.note}}</textarea>
+                            {% endif %}
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">แก้ไขสถานะ</button>
+                        </div>
+                        
+                        <!-- popup form -->
+                        <form action="{%url 'change_status' assign.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalToggleLabel">แก้ไขสถานะ</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="my-3">
+                                            <label for="cars">สถานะ :</label>
+                                            <select id="cars" class="form-control" name="status">
+                                                <option value="{{assign.status}}" hidden>{{assign.get_status_display}}</option>
+                                                <option value="2">กำลังดำเนินการ</option>
+                                                <option value="3">ดำเนินการเสร็จสิ้น</option>
+                                            </select>
+                                        </div>
+                                        <div class="my-3">
+                                            <label for="note">หมายเหตุ :</label>
+                                            {% if assign.note != None %}
+                                            <textarea name="note" class="form-control" id="note">{{assign.note}}</textarea>
+                                            {% else %}
+                                            <textarea name="note" class="form-control" id="note"></textarea>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-primary" type="submit">ยืนยัน</button>
+                                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

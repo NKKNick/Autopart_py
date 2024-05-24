@@ -26,7 +26,10 @@ SECRET_KEY = "django-insecure--q452l54p+wxk)aa(+v+z7ct-u40ciggl%d&nch39ny_)b+ti@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = ['https://buck-relaxing-hedgehog.ngrok-free.app']
+
 
 
 # Application definition
@@ -85,8 +88,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'autopart',
-        'USER': 'user',
-        'PASSWORD': 'password',
+        'USER': 'root',
+        'PASSWORD': 'N!ck3541',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -141,3 +144,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #Notify by line
 LINE_NOTIFY_TOKEN = 'obQYdfCIAcBJCbwHXWCh5aHsSHwfSV50l4pumQvxBKX'
+
+
+#celery settting
+CELERY_BROKER_URL = 'redis://localhost:80'  
+CELERY_RESULT_BACKEND = 'redis://localhost:80'

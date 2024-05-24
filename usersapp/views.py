@@ -1,6 +1,11 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.models import User,auth
+from django.contrib.auth.decorators import login_required
+from custom.check_order import user_is_worker
+from usersapp.forms import ProfileForm
+from usersapp.models import UserProfile
+from django.utils import timezone
 # Create your views here.
 def login(req):
     if req.method == "POST":
@@ -15,11 +20,18 @@ def login(req):
                 auth.login(req,user)
                 if user.has_perm('admin'):
                     return redirect('/dashboard')
+                elif user_is_worker(user):
+                    cur = timezone.now().date()
+                    print(cur.year)
+                    return redirect(f'/work/{cur.year}/{cur.month}')
                 return redirect('/')
             else:
                 messages.warning(req,"ไม่พบบัญชีผู้ใช้")
                 return redirect('/login')
     return render(req,'login.html')
+
+
+
 def register(req):
     if req.method == "POST":
         username = req.POST["username"]
@@ -49,6 +61,39 @@ def register(req):
                 messages.success(req,'สร้างผู้ใช้เรียบร้อย')
                 return redirect("/login")
     return render(req,'register.html')
+
 def logout(req):
     auth.logout(req)
     return redirect("/")
+
+@login_required(login_url="/login")
+def user_profile(req):
+    user_obj = User.objects.get(pk=req.user.id)
+    try:
+        if req.method == "POST":
+            profile = UserProfile.objects.get(user=req.user.id)
+            form = ProfileForm(req.POST,req.FILES,instance=profile)
+            print(form.data)
+            if form.is_valid():
+                form.instance.owner = req.user
+                form.save()
+                return redirect('/')
+        else:
+            profile = UserProfile.objects.get(user=req.user.id)
+            form = ProfileForm(instance=profile)
+        return render(req,'user_profile.html',{'profile':profile,'form':form})
+    except:
+        if req.method == "POST":
+            profile = UserProfile.objects.create(
+                image= req.FILES['image'],
+                firstname = req.POST['firstname'],
+                lastname = req.POST['lastname'],
+                address = req.POST['address'],
+                phone = req.POST['phone'],
+                user = user_obj
+            )
+            profile.save()
+            return redirect('/')
+        return render(req,"create_profile.html")
+
+

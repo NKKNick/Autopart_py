@@ -2,6 +2,7 @@ from user_cart.models import Cart, CartDetail
 from user_order.models import Order, Payment
 from django.contrib.auth.models import User
 
+from usersapp.models import UserProfile
 from worker_app.models import Worker
 
 
@@ -27,3 +28,11 @@ def user_is_worker(user):
         return True
     except:
         return False
+    
+def profile_is_exist(user):
+    try:
+        profile = UserProfile.objects.get(user=user)
+        return True
+    except:
+        return False
+    

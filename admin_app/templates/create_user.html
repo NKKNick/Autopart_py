@@ -1,0 +1,37 @@
+{% extends 'sidebar.html' %}
+
+{% block content %}
+<div class="my-5 px-5 container text-center" style="width: 100%;">
+  <div class="row py-5 px-5 rounded shadow bg-light" style="height: 100%;">
+      <h1 >เพิ่มผู้ใช้ในระบบ</h1>
+      <div class="mt-5">
+        <form class="row g-3 text-start" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+            {% if messages %}
+              {% for i in messages %}
+              <div class="alert alert-{{i.tags}}" role="alert">
+                  {{i}}
+              </div>
+              {% endfor %}
+            {% endif %}
+            <div class="col-12">
+              <label for="product_name" class="form-label">email</label>
+              <input type="email" class="form-control" id="product_name" name="email" placeholder="กรอกอีเมล">
+            </div>
+            <div class="col-12">
+              <label for="inputAddress" class="form-label">username</label>
+              <input type="text" class="form-control" name="username" id="inputAddress" placeholder="กรอกชื่อผู้ใช้">
+            </div>
+            <div class="col-12 mb-3">
+              <label for="inputAddress2" class="form-label">รหัสผ่าน</label>
+              <input type="password" class="form-control" name="password" id="inputAddress2" placeholder="รหัสผ่าน">
+            </div>
+            </div>
+            <div class="col-12 text-center">
+              <button type="submit" class="btn btn-primary" style="width: 25%;">ยืนยัน</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}

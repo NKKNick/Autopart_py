@@ -1,0 +1,49 @@
+{% extends 'navbar.html' %}
+{% block import %}
+<style>
+    p{
+        margin-bottom: 0;
+    }
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class="my-5">
+{%for i in w_req %}
+    <div class="mt-2 d-flex justify-content-center">
+        <div class="card mt-2 w-75 rounded-0">
+            <div class="px-3">
+                <div class="row card-header" style="background-color: white;">
+                    <div class="col"><strong>รหัสแจ้งซ่อม: {{i.id}}</strong></div>
+                    <div class="col d-flex justify-content-end">สถานะ: 
+                        {%if i.status == "1" %}
+                        <div class="text-secondary">&nbsp{{i.get_status_display}}</div>
+                        {% elif i.status == "2" %}
+                        <div class="text-primary">&nbsp{{i.get_status_display}}</div>
+                        {% else %}
+                        <div style="color: #2dc258">&nbsp{{i.get_status_display}}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-text">
+                        <p>อะไหล่ : {{i.car_part}}</p>
+                        <p>ยี่ห้อ : {{i.car_brand}}</p>
+                        <p>วันที่แจ้งซ่อม : {{i.created |date:"d/m/Y"}}</p>
+                        <a href="{%url 'req_detail' i.id %}" class=" my-2 btn btn-primary">รายละเอียด</a>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+{% endfor %}
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'sidebar.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-sm w-50 h-100 py-5">
+    <div class="d-flex justify-content-center">
+      <h2>ข้อมูลการแจ้งซ่อม</h2>
+    </div>
+    
+    <div class="card py-5 px-5">
+      
+        <div class="d-flex justify-content-center">
+          
+            <form class="row g-3" method="POST" action="{%url 'repair' %}">
+              {% csrf_token %}
+              <!--
+                <div class="d-flex justify-content-center my-3 py-3">
+                  <div class="btn-group gap-5" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" value="เกียร์" class="btn-check" name="carpart" id="btnradio1" autocomplete="off" checked>
+                    <label class="btn btn-outline-dark rounded-1" for="btnradio1" style="width: 14rem;">
+                      <img src="{%static 'images/gear.gif' %}" alt="เกียร์" style="width: 100%; height: 100%;">
+                    </label>
+                    <input type="radio" value="เครื่องยนต์" class="btn-check" name="carpart" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-dark rounded-1 " for="btnradio2" style="width: 14rem;">
+                      <img src="{%static 'images/car-engine.png' %}" alt="เครื่องยนต์" style="width: 100%; height: 100%;">
+                    </label>
+                  </div>
+                </div>                  
+              -->
+                <div class="col-md-12">
+                  <label for="firstname" class="form-label">ชื่อ</label>
+                  <input type="text" class="form-control" name="firstname" id="firstname">
+                </div>
+                <div class="col-md-12">
+                  <label for="lastname" class="form-label">นามสกุล</label>
+                  <input type="text" class="form-control" name="lastname" id="lastname">
+                </div>
+                <div class="col-md-12">
+                  <label for="phone" class="form-label">เบอร์โทรศัพท์</label>
+                  <input type="text" class="form-control" name="phone" id="phone">
+                </div>
+                
+                <div>
+                  <label for="form-select" class="form-label">อะไหล่</label>
+                  <select class="form-select" aria-label="Default select example" name="carpart">
+                    <option selected hidden>เลือกอะไหล่</option>
+                    <option value="เกียร์ออโต้">เกียร์ออโต้</option>
+                    <option value="เกียร์ห้า">เกียร์ห้า</option>
+                    <option value="เกียร์หก">เกียร์หก</option>
+                    <option value="ไดสตาร์ท">ไดสตาร์ท</option>
+                    <option value="เครื่องยนต์">เครื่องยนต์</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="form-select" class="form-label">ยี่ห้อ</label>
+                  <select class="form-select" aria-label="Default select example" name="car_brand">
+                    <option selected hidden>เลือกยี่ห้อ</option>
+                    <option value="อีซูซุ">อีซูซุ</option>
+                    <option value="โตโยต้า">โตโยต้า</option>
+                    <option value="มิตซู">มิตซู</option>
+                  </select>
+                </div>
+                <div class="col-md-12">
+                  <label for="note" class="form-label">หมายเหตุ</label>
+                  <textarea type="text" class="form-control" name="note" id="note" placeholder="เช่น มีการชำรุดที่ส่วนไหน หรือนำกลับมาซ่อมใหม่เพราะอะไร"></textarea>
+                </div>
+                <div class="col-md-12">
+                  <label for="enddate" class="form-label">วันที่เสร็จสิ้น</label>
+                  <input type="datetime-local" class="form-control" name="enddate">
+                </div>
+                <div class="col-12 py-3">
+                  <button type="submit" class="btn btn-primary">ยืนยัน</button>
+                </div>
+              </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

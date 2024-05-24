@@ -8,10 +8,14 @@ class product(models.Model):
   description = models.TextField()
   brand = models.CharField(max_length=100)
   price = models.IntegerField()
+  cost = models.IntegerField(default=200)
   stock = models.IntegerField()
   picture = models.ImageField(upload_to="product",blank=True)
 
   def __str__(self) -> str:
     return f'{self.product_name}'
+  
+  def sumcost(self):
+    return self.cost * self.stock
   
 

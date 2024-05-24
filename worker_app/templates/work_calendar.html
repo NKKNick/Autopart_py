@@ -1,0 +1,177 @@
+{% extends 'nav_worker.html' %}
+
+
+
+{% block import %}
+    <style>
+        /* Calendar Container */
+.calendar-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+/* Month Navigation */
+.month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.calendar-day {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Today Highlight */
+.today {
+    background-color: #f0f0f0;
+}
+
+/* Events Indicator */
+.event-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #007bff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="calendar-container my-5">
+        <div class="month-navigation">
+            {% if month > cur_mon and year == cur_year %}
+            <a href="{%url 'now_month' %}" class="btn btn-primary">&lt; </a>
+            {% elif month == cur_mon and year == cur_year %}
+            <a href="{%url 'prev_month' %}" class="btn btn-primary">&lt; </a>
+            {%else %}
+            <a href="{%url 'now_month' %}" class="btn btn-primary disabled" >&lt; </a>
+            {% endif %}
+            {% if month == cur_mon and year == cur_year %}
+            <a href="{%url 'now_month' %}" id="current-month" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
+            {% else %}
+            <a href="{%url 'now_month' %}" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
+            {% endif %}
+
+            {% if month < cur_mon and year == cur_year %}
+            <a href="{%url 'now_month' %}" class="btn btn-primary"> &gt;</a>
+            {% elif month == cur_mon and year == cur_year %}
+            <a href="{%url 'next_month' %}" class="btn btn-primary"> &gt;</a>
+            {%else %}
+            <a href="{%url 'next_month' %}" class="btn btn-primary disabled"> &gt;</a>
+            {% endif %}
+        </div>
+        <div class="calendar-grid">
+            <div class="calendar-day">อา</div>
+            <div class="calendar-day">จ</div>
+            <div class="calendar-day">อ</div>
+            <div class="calendar-day">พ</div>
+            <div class="calendar-day">พฤ</div>
+            <div class="calendar-day">ศ</div>
+            <div class="calendar-day">ส</div>
+        
+            <!-- for loop assign here-->
+            {% for i in day %}
+                {% if i == 0 %}
+                    <div></div>
+                {% elif i == cur and cur_mon == month and cur_year == year %}
+                    <div class="calendar-day btn btn-primary">{{ i }}</div>
+                {% else %}
+                    {% for a in assign %}
+                        {% if a.end_date.day == i and a.end_date.month == month and a.end_date.year == year %}
+                            <a href="{%url 'work_detail' a.id %}"><div class="calendar-day btn btn-danger" style="width: 100%;">{{ i }}</div></a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if assign != none %}
+                        <div class="calendar-day">{{ i }}</div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div><small class="text-secondary">หมายเหตุ : <b class="text-danger">สีแดง</b> คือ วันที่ครบกำหนด</small></div> 
+    </div>
+        <div class="container">
+          <div class="row my-5" >
+            <div class="col-12">
+              <h2 class="mb-4">งานที่ต้องทำ</h2>
+              <div class="row">
+                {% for i in assign %}
+                <div class="col-xl-4 col-md-6 col-sm-12">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <h5 class="card-title pb-2">ชื่อลูกค้า: {{i.work_request.firstname}} {{i.work_request.lastname}}</h5>
+                      <p class="card-text">ชื่อในระบบ : {{i.work_request.customer}}</p>
+                      <p class="card-text">สถานะ : {{i.get_status_display}}</p>
+                      <p class="card-text">วันที่ครบกำหนด: {{i.end_date | date:"d / m / Y"  }}</p>
+                      <div>
+                        <a href="{%url 'work_detail' i.id %}" class="btn btn-primary">รายละเอียด</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+                
+              </div>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+
+    <script>
+        // Get all div elements with the specified class name
+        var divElements = document.querySelectorAll('.calendar-day');
+    
+        // Object to store the count of each value
+        var valueCount = {};
+    
+        // Loop through each div element
+        divElements.forEach(function(divElement) {
+            var value = divElement.innerHTML.trim(); // Get the inner HTML content and remove leading/trailing spaces
+            // Increase the count of the current value
+            valueCount[value] = (valueCount[value] || 0) + 1;
+    
+            // Check if the current value has occurred more than once
+            if (valueCount[value] > 1) {
+                // Remove the second occurrence of the value
+                divElement.remove();
+            }
+        });
+        // Get the current date
+        const currentDate = new Date();
+
+        // Array of month names
+        const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+            "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        ];
+
+        // Get the month and year
+        const currentMonth = monthNames[currentDate.getMonth()];
+        const currentYear = currentDate.getFullYear();
+
+        // Update the span element with the month name and year
+        document.getElementById("current-month").textContent = `${currentMonth} ${currentYear}`;
+    </script>
+{% endblock %}
+

@@ -1,0 +1,188 @@
+{% extends 'navbar.html' %}
+{% block import %}
+<style>
+    .step-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .step {
+      text-align: center;
+      font-weight: bold;
+      margin: 0 0.2rem;
+    }
+    .step-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: white;
+      border: 2px solid #ced4da;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .step-description {
+      font-size: 0.8rem;
+    }
+    .border-green{
+        border-color: #2dc258;
+
+    }
+    .bg-green{
+        background-color: #2dc258;
+    }
+    .cg{
+        color: #2dc258;
+        font-size: 120%;
+    }
+    .text-black{
+      font-size: 120%;
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+      <div class="col-md-8 offset-md-2">
+          <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <h6 class="card-title col">หมายเลขแจ้งซ่อม {{w_req.id}}</h5>
+                  <h6 class="card-title col d-flex justify-content-end">สถานะ | <div class="text-primary">&nbsp{{assign.get_status_display}}</div></h5>
+                </div>
+                  
+              </div>
+              <div class="card-body">
+                <div>
+                  {% if assign != none %}
+                  {% if assign.status == "2" %}
+                  <div class="container mt-5">
+                    <div class="step-container">
+                      <div class="step">
+                        <div class="d-flex justify-content-center">
+                            <div class="step-circle border-5 border-green text-white"><i class="bi bi-receipt cg" ></i></div>
+                        </div>
+                        <div class="step-description">ทำการแจ้งซ่อม</div>
+                        <div class="step-description text-secondary">{{assign.start_date | date:'d/m/y H:i '}}</div>
+                      </div>
+                      
+                      <div class="step">
+                        <div class="d-flex justify-content-center">
+                            <div class="step-circle border-5 border-secondary text-white"><i class="bi bi-clipboard-check text-black"></i></div>
+                        </div>
+                        <div class="step-description">เสร็จสิ้น</div>
+                      </div>
+                    </div>
+                    <div class="progress mt-3">
+                      <div class="progress-bar bg-green" role="progressbar" style="width: 50%;"></div>
+                    </div>
+                  </div>
+                  {% elif assign.status == "3" %}
+                  <div class="container mt-5">
+                    <div class="step-container">
+                      <div class="step">
+                        <div class="d-flex justify-content-center">
+                            <div class="step-circle border-5 border-green text-white"><i class="bi bi-receipt cg" ></i></div>
+                        </div>
+                        <div class="step-description">ทำการแจ้งซ่อม</div>
+                        <div class="step-description text-secondary">{{assign.start_date | date:'d/m/y H:i '}}</div>
+                      </div>
+
+                      
+                      <div class="step">
+                        <div class="d-flex justify-content-center">
+                            <div class="step-circle border-5 border-green text-white"><i class="bi bi-clipboard-check text-black"></i></div>
+                        </div>
+                        <div class="step-description">เสร็จสิ้น</div>
+                        <div class="step-description text-secondary">{{assign.end_date | date:'d/m/y H:i '}}</div>
+                      </div>
+                    </div>
+                    <div class="progress mt-3">
+                      <div class="progress-bar bg-green" role="progressbar" style="width: 100%;"></div>
+                    </div>
+                  </div>
+                  {% elif assign.status == "4" %}
+                  การแจ้งซ่อมนี้ถูกยกเลิกแล้ว หากมีปัญหาอะไรโปรดติดต่อเจ้าหน้าที่
+                  {% endif %}
+                  {% else %}
+                  ทางเรายังไม่ได้แจกจ่ายงานให้ช่าง เราจะรีบดำเนินการโดยด่วน
+                  {% endif %}
+              </div> 
+              {% if assign != none %}
+              <hr>
+                  <div class="form-group">
+                      <label for="workName">แจ้งซ่อม:</label>
+                      <input type="text" id="workName" class="form-control" readonly value="{{assign.work_request.car_part}}">
+                  </div>
+                  <div class="form-group">
+                      <label for="workName">ยี่ห้อ:</label>
+                      <input type="text" id="workName" class="form-control" readonly value="{{assign.work_request.car_brand}}">
+                  </div>
+                  <div class="form-group">
+                      <label for="status">สถานะ:</label>
+                      <input type="text" id="status" class="form-control" readonly value="{{assign.get_status_display}}">
+                  </div>
+                  <div class="form-group">
+                      <label for="startDate">วันที่ซ่อม:</label>
+                      <input type="text" id="startDate" class="form-control" readonly value="{{assign.start_date | date:'d / m / Y' }}">
+                  </div>
+                  <div class="form-group">
+                      <label for="endDate">วันที่อัพเดท:</label>
+                      <input type="text" id="endDate" class="form-control" readonly value="{{assign.end_date | date:'d / m / Y' }}">
+                  </div>
+                  <div class="form-group">
+                      <label for="worker">ชื่อช่างซ่อม:</label>
+                      <input type="text" id="worker" class="form-control" readonly value="{{assign.worker.firstname}} {{assign.worker.lastname}}">
+                  </div>
+                  <div class="my-3">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">แสดงใบแจ้งหนี้</button>
+                  </div>
+                {% else %}
+
+                {% endif %}
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+{% if bill != none %}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">ใบแจ้งหนี้ {{bill.id}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ราคาที่ต้องชำระ {{bill.cost}} ฿
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+        <button type="button" class="btn btn-primary">ตกลง</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">รายละเอียดการแจ้งหนี้</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ตอนนี้คุณยังไม่มีการแจ้งใบชำระหนี้โปรดดูใหม่ในภายหลัง
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">โอเค</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+

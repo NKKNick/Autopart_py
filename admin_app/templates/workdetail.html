@@ -1,0 +1,113 @@
+{% extends 'sidebar.html' %}
+
+{% block content %}
+<div class="my-5 px-5 container" style="width: 100%;">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Work Detail</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label for="worker">ช่างซ่อม:</label>
+                                <input type="text" id="worker" class="form-control" readonly value="{{assign.worker.firstname}} {{assign.worker.lastname}}">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="worker">ลูกค้า:</label>
+                                <input type="text" class="form-control" readonly value="{{assign.work_request.firstname}} {{assign.work_request.lastname}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="workName">เบอร์ติดต่อลูกค้า:</label>
+                            <input type="text" id="workName" class="form-control" readonly value="{{work.phone}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="workName">อะไหล่:</label>
+                            <input type="text" id="workName" class="form-control" readonly value="{{work.car_part}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">ยี่ห้อ:</label>
+                            <input type="text" id="workName" class="form-control" readonly value="{{work.car_brand}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">สถานะ:</label>
+                            <input type="text" id="status" class="form-control" readonly value="{{assign.get_status_display}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">วันที่มอบหมาย:</label>
+                            <input type="text" id="startDate" class="form-control" readonly value="{{assign.start_date | date:'d / m / Y' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">วันที่ครบกำหนด:</label>
+                            <input type="text" id="endDate" class="form-control" readonly value="{{assign.end_date | date:'d / m / Y' }}">
+                        </div>
+                        
+                       
+                        <div class="form-group">
+                            <label for="worker">หมายเหตุ:</label>
+                            <textarea type="text"  class="form-control" readonly value="{{assign.work_request.note}}"></textarea>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" data-bs-target="#bill" data-bs-toggle="modal">แจ้งบิลเก็บเงิน</button>
+                            <button class="btn btn-secondary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">แก้ไขสถานะ</button>
+                        </div>
+                        
+                        <!-- แจ้งบิลเก็บเงิน -->
+                        <form action="{%url 'create_bill' work.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal fade" id="bill" aria-hidden="true" aria-labelledby="billLabel" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="billLabel">แจ้งบิลเก็บเงิน</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="change">จำนวน :</label>
+                                        <input name="cost" type="number">
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-primary" type="submit">ยืนยัน</button>
+                                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- แก้ไขสถานะ -->
+                        <form action="{%url 'admin_change' assign.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalToggleLabel">แก้ไขสถานะ</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="cars">สถานะ:</label>
+                                        <select class="form-control" id="cars" name="status">
+                                            <option hidden>{{assign.get_status_display}}</option>
+                                            <option value="2">กำลังดำเนินการ</option>
+                                            <option value="3">เสร็จสิ้น</option>
+                                            <option value="4">ยกเลิก</option>
+                                          </select>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-primary" type="submit">ยืนยัน</button>
+                                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

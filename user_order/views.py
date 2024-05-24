@@ -8,6 +8,7 @@ from custom.line_notify import send_image
 from user_order.models import *
 from user_cart.models import Cart,CartDetail
 from userinterface.models import product as Product
+from usersapp.models import UserProfile
 # Create your views here.
 
     
@@ -40,16 +41,14 @@ def order(req):
                     order = order,
                 )
                 order_detail.save()
-                #ลดสต็อก
-                '''
-                product = Product.objects.get(pk=i.product.id)
-                product.stock = int(i.product.stock - order_detail.amount)
-                product.save()
-                '''
                 i.delete()
             cart.delete()
             return redirect('/order/payment/%d'%order.id)
-        return render(req,'order.html')
+        try:
+            profile = UserProfile.objects.get(user=req.user)
+            return render(req,'orderwp.html',{'profile':profile})
+        except:
+            return render(req,'order.html')
     return redirect('/')
 
 def payment(req,id):

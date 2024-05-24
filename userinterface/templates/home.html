@@ -19,12 +19,12 @@
     <div class="row">
         <!-- Product 1 -->
         {% for i in product %}
-        <div class="col-md-3 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card">
                 <img src="{{i.picture.url}}" style="width: auto; height: 250px;" class="card-img-top object-fit-cover" alt="Product Image">
                 <div class="card-body">
                     <h5 class="card-title">{{i.product_name}}</h5>
-                    <p class="card-text">ราคา: {{i.price}} ฿ 
+                    <p class="card-text">ราคา: {{i.price | intcomma}} ฿ 
                       <br>คงเหลือ: {{i.stock}} ชิ้น</p>
                     {% if i.stock <= 0 %}
                     <a href="#" class="btn btn-secondary border-0">สินค้าหมด</a>
@@ -35,7 +35,21 @@
             </div>
         </div>
         {% endfor %}
+        
       </div>
+      <div class="d-flex justify-content-center my-5">
+        <nav aria-label="...">
+            <ul class="pagination pagination-lg">
+                {% for i in product.paginator.page_range %}
+                {% if i != product.number  %}
+                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                {% else %}
+                <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </nav>
+    </div>
   </div>
 </section>
 

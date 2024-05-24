@@ -1,0 +1,41 @@
+{% extends 'sidebar.html' %}
+
+{% block content %}
+<div class="my-5 px-5 container text-center" style="width: 100%;">
+  <div class="row py-5 px-5 rounded shadow bg-light" >
+      <h1 >เพิ่มช่างซ่อม</h1>
+      <div class="mt-5">
+        <form class="row g-3 text-start" action="{%url 'create_worker' users.id %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="d-flex justify-content-center">
+            <img src="#" class="d-none" alt="example" id="preview-image">
+          </div>
+          <div class="col-12">
+            <label for="product_name" class="form-label">รูปของช่างซ่อม</label>
+            <input type="file" class="form-control" name="image" id="file-input" >
+          </div>
+            <div class="col-md-6">
+              <label for="product_name" class="form-label">ชื่อ</label>
+              <input type="text" class="form-control"  name="firstname" placeholder="กรอกชื่อช่างซ่อม">
+            </div>
+            <div class="col-md-6">
+              <label for="inputAddress" class="form-label">นามสกุล</label>
+              <input type="text" class="form-control" name="lastname" id="inputAddress" placeholder="กรอกนามสกุล">
+            </div>
+            <div class="col-12">
+              <label for="inputAddress2" class="form-label">เบอร์โทรศัพท์</label>
+              <input type="number" class="form-control" name="phone" id="inputAddress2" placeholder="เบอร์โทรศัพท์ที่ใช้ติดต่อช่างได้">
+            </div>
+            <div class="col-12 mb-5">
+              <label for="inputAddress2" class="form-label">ความสามารถ</label>
+              <input type="text" class="form-control" name="specialization" id="inputAddress2" placeholder="เช่น ช่างสามารถทำอะไรได้บ้างหรือซ่อมอะไหล่อะไรได้บ้าง  ">
+            </div>
+            <input type="hidden" name="worker" value="{{ users.id }}">
+            <div class="col-12 text-center">
+              <button type="submit" class="btn btn-primary" style="width: 25%;">ตกลง</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}
