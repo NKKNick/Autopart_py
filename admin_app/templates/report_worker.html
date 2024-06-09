@@ -1,0 +1,295 @@
+{% extends 'sidebar.html' %}
+
+{% block import %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="px-5 py-5" style="width: 100%;">
+    <div class="row">
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                งานทั้งหมด</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{current_month_work_done}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{%url 'assign_display' %}" class="text-decoration-none">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                งานที่มีในระบบ</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{current_month_work_have}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{%url 'work_display' %}" class="text-decoration-none">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                งานที่ยังไม่แจกจ่าย</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{current_unassign}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        </div>
+    
+        
+    
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{%url 'worker_show2' %}" class="text-decoration-none">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                ช่างในระบบ</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{worker_count}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">สรุปผลของเดือนนี้</h6>
+                    <div class="dropdown no-arrow">
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <form method="get" action="">
+                        <div class="row px-3 py-3">
+                            <div class="col-5">
+                                <label for="year">Year:</label>
+                                <select class="form-control" name="year_bar" id="year">
+                                    <option value="{{now.year}}" hidden>{{now.year}}</option>
+                                    {% for y in select_year_bar %}
+                                        <option value="{{ y.year }}" {% if y.year == selected_year_bar %}selected{% endif %}>
+                                            {{ y.year }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <label for="month">Month:</label>
+                                <select class="form-control" name="month_bar" id="month">
+                                    <option value="{{now.month}}" hidden>{{now|date:'M'}}</option>
+                                    {% for m in select_month_bar %}
+                                    <option value="{{ m.month }}" {% if m.month == selected_month_bar %}selected{% endif %}>
+                                        {{ m|date:"F" }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col py-4">
+                                <button class="btn btn-info" type="submit">ยืนยัน</button>
+                            </div>
+                        </div>
+                    </form>
+                        <canvas id="myChart1" width="454" height="320" style="display: block; width: 454px; height: 320px;" class="chartjs-render-monitor"></canvas>
+                        <script>
+                            var ctx = document.getElementById('myChart1').getContext('2d');
+                            var labels = [{% for i, _ in worker_data.items %} '{{ i }}', {% endfor %}];
+                            var barData = [{% for _, i in worker_data.items %} {{ i }}, {% endfor %}];
+
+                            // Calculate the average value for the line chart
+                            var total = barData.reduce((sum, value) => sum + value, 0);
+                            var average = total / barData.length;
+                            function roundTo(num, precision) {
+                            const factor = Math.pow(10, precision)
+                            return Math.round(num * factor) / factor
+                            }
+                            const rounded = roundTo(average, 2)
+                            var lineData = new Array(labels.length).fill(rounded);
+                            var myChart1 = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: labels,
+                                    
+                                    datasets: [{
+                                        data: barData,
+                                        label: "งานที่ช่างทำได้",
+                                        backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)',
+                                        'rgba(255, 205, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(201, 203, 207, 0.2)'
+                                        ],
+                                        borderColor: [
+                                        'rgb(255, 99, 132)',
+                                        'rgb(255, 159, 64)',
+                                        'rgb(255, 205, 86)',
+                                        'rgb(75, 192, 192)',
+                                        'rgb(54, 162, 235)',
+                                        'rgb(153, 102, 255)',
+                                        'rgb(201, 203, 207)'
+                                        ],
+                                            borderWidth: 1
+                                        },{
+                                            type: 'line',
+                                            label: 'ค่าเฉลี่ย',
+                                            data: lineData,
+                                            fill: false,
+                                            borderColor: 'rgb(54, 162, 235)',
+                                            tension:0.1,
+                                            pointRadius: 6, // Increase the size of the dots
+                                            pointHoverRadius: 8, // Increase the size of the dots on hover
+                                            pointBackgroundColor: 'rgb(54, 162, 235)', // Optional: color of the dots
+                                            pointBorderColor: 'rgb(54, 162, 235)', // Optional: border color of the dots
+                                        }]
+
+                                    },
+                                options: {
+                                    legend: {display: true},
+                                    title: {
+                                        display: true,
+                                        text: "สรุปผลการทำงานของช่าง"
+                                        },
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    stepSize: 1 // Set step size to 1 for y-axis
+                                                }
+                                            }]
+                                        }
+                                    }
+                                    });
+    
+    
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">สรุปการซ่อม</h6>
+                    <div class="dropdown no-arrow">
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <form method="get" action="">
+                        <div class="row px-3 py-3">
+                            <div class="col-10">
+                                <label for="year">Year: </label>
+                                <select class="form-control" name="year_line">
+                                    <option value="{{now.year}}" hidden>{{now.year}}</option>
+                                    {% for y in select_year_line %}
+                                        <option value="{{ y.year }}" {% if y.year == selected_year_line %}selected{% endif %}>
+                                            {{ y.year }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col py-4">
+                                <button class="btn btn-info" type="submit">ยืนยัน</button>
+                            </div>
+                        </div>
+                    </form>
+                        <canvas id="myChart" width="454" height="320" style="display: block; width: 454px; height: 320px;" class="chartjs-render-monitor"></canvas>
+                        <script>
+                            var ctx = document.getElementById('myChart').getContext('2d');
+                            var completedWorkDict = {};
+                            {% for i in completed_work_per_month %}
+                                completedWorkDict['{{ i.month_end_date|date:'F' }}'] = {{ i.completed_count }};
+                            {% endfor %}
+
+                            // Create a dictionary for late work per month
+                            var workLateDict = {};
+                            {% for i in work_late %}
+                                workLateDict['{{ i.month_end_date|date:'F' }}'] = {{ i.completed_count }};
+                            {% endfor %}
+
+                            // Define all months (assuming you want data for a full year)
+                            var allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            var labels = [];
+                            var lineData = [];
+                            var lineLate = [];
+
+                            // Populate the arrays based on the dictionaries
+                            for (var month of allMonths) {
+                                labels.push(month);
+                                lineData.push(completedWorkDict[month] || 0);
+                                lineLate.push(workLateDict[month] || 0);
+                            }
+                            var myChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels ,
+                                    datasets: [{
+                                        label: 'การซ่อมทั้งหมด',
+                                        data: lineData,
+                                        fill: false,
+                                        borderColor: 'rgb(54, 162, 235)',
+                                        tension: 0.1
+                                    },
+                                    {
+                                        label: 'เลยกำหนด',
+                                        data: lineLate,
+                                        fill: false,
+                                        borderColor: 'rgb(255, 99, 132)',
+                                        tension: 0.1
+                                },]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true,
+                                                stepSize: 1 // Set step size to 1 for y-axis
+                                            }
+                                        }]
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    
+
+</div>
+
+{% endblock %}

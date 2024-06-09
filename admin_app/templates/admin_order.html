@@ -1,5 +1,6 @@
 {% extends 'sidebar.html' %}
 {% load humanize %}
+{% load static %}
 {% block title %}หน้า admin {% endblock %}
 {% block content %}
     <div class="my-5 container text-center" style="width: 100%;">
@@ -24,17 +25,32 @@
                         {% for i in order %}
                     <form action="{%url 'dash_status' i.id %}" method="post">
                         {% csrf_token %}
-                      <tr>
-                        <th scope="row">{{i.id}}</th>
-                        <td>{{i.fullname}}</td>
+                      {% if i.status == "1" or i.status == "2"%}
+                      <tr class="table-secondary">
+                        
+                      {% elif i.status == "5" %}
+                      <tr class="table-success">
+                      {% elif i.status == "7" or i.status == "8" %}
+                      <tr class="table-danger">
+                      {% else %}
+                      <tr class="table-primary">
+                      {% endif %}
+                      {% if i.status == "1" or i.status == "2"%}
+                        <th scope="row " class="text-start">
+                          <img src="{%static 'images/new5.gif' %}" alt="">&nbsp;&nbsp;&nbsp;
+                          {{i.id}}
+                        </th>
+                      {% else %}
+                      <th scope="row">{{i.id}}</th>
+                      {% endif %}
+                        <td >{{i.fullname}}</td>
                         <td>{{i.phone}}</td>
                         <td style="width: 15%;" >
                             <select name="status" class="form-select" aria-label="Default select example">
-                                <option selected hidden>{{i.get_status_display}}</option>
+                                <option selected hidden >{{i.get_status_display}}</option>
                                 <option value="3">กำลังเตรียมสินค้า</option>
                                 <option value="4">กำลังนำสินค้าไปส่ง</option>
                                 <option value="5">ทำการส่งเรียบร้อย</option>
-                                <option value="6">ผู้ใช้รับสินค้าแล้ว</option>
                                 <option value="7">ยกเลิกคำสั่งซื้อ</option>
                                 <option value="8">สลิปไม่ถูกต้อง</option>
                             </select>
@@ -48,6 +64,17 @@
                         {% endfor %}
                     </tbody>
                   </table>
+                  <nav aria-label="product-pagination" class="media-container-row">
+                    <ul class="pagination pagination-md">
+                      {% for i in order.paginator.page_range %}
+                        {% if i != order.number  %}
+                        <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% else %}
+                        <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

@@ -63,24 +63,24 @@
     <div class="calendar-container my-5">
         <div class="month-navigation">
             {% if month > cur_mon and year == cur_year %}
-            <a href="{%url 'now_month2' %}" class="btn btn-primary">&lt; </a>
+            <a href="{%url 'now_month2' worker_id %}" class="btn btn-primary">&lt; </a>
             {% elif month == cur_mon and year == cur_year %}
-            <a href="{%url 'prev_month2' %}" class="btn btn-primary">&lt; </a>
+            <a href="{%url 'prev_month2' worker_id %}" class="btn btn-primary">&lt; </a>
             {%else %}
-            <a href="{%url 'now_month2' %}" class="btn btn-primary disabled" >&lt; </a>
+            <a href="{%url 'now_month2' worker_id  %}" class="btn btn-primary disabled" >&lt; </a>
             {% endif %}
             {% if month == cur_mon and year == cur_year %}
-            <a href="{%url 'now_month2' %}" id="current-month" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
+            <a href="{%url 'now_month2' worker_id %}" id="current-month" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
             {% else %}
-            <a href="{%url 'now_month2' %}" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
+            <a href="{%url 'now_month2' worker_id %}" class="btn btn-primary">ไปยังเดือนปัจจุบัน</a>
             {% endif %}
 
             {% if month < cur_mon and year == cur_year %}
-            <a href="{%url 'now_month2' %}" class="btn btn-primary"> &gt;</a>
+            <a href="{%url 'now_month2' worker_id %}" class="btn btn-primary"> &gt;</a>
             {% elif month == cur_mon and year == cur_year %}
-            <a href="{%url 'next_month2' %}" class="btn btn-primary"> &gt;</a>
+            <a href="{%url 'next_month2' worker_id %}" class="btn btn-primary"> &gt;</a>
             {%else %}
-            <a href="{%url 'next_month2' %}" class="btn btn-primary disabled"> &gt;</a>
+            <a href="{%url 'next_month2' worker_id %}" class="btn btn-primary disabled"> &gt;</a>
             {% endif %}
         </div>
         <div class="calendar-grid">

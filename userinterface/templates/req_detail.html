@@ -136,9 +136,20 @@
                       <label for="worker">ชื่อช่างซ่อม:</label>
                       <input type="text" id="worker" class="form-control" readonly value="{{assign.worker.firstname}} {{assign.worker.lastname}}">
                   </div>
+                  <div class="form-group">
+                    <label for="note">หมายเหตุจากช่างซ่อม:</label>
+                    <textarea id="note" class="form-control" readonly>{{assign.note}}</textarea>
+
+                  </div>
+                  {% if bill != none %}
                   <div class="my-3">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">แสดงใบแจ้งหนี้</button>
                   </div>
+                  {% else %}
+                  <div class="my-3">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">แสดงใบแจ้งหนี้</button>
+                  </div>
+                  {% endif %}
                 {% else %}
 
                 {% endif %}

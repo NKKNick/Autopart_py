@@ -48,10 +48,13 @@
                             <textarea class="form-control" name="worker" id="worker" readonly>{{assign.work_request.note}}</textarea>
                             {% endif %}
                         </div>
+                        {% if assign.status == '4' %}
+                        <div></div>
+                        {% else %}
                         <div class="mt-3">
                             <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">แก้ไขสถานะ</button>
                         </div>
-                        
+                        {% endif %}
                         <!-- popup form -->
                         <form action="{%url 'change_status' assign.id %}" method="POST">
                             {% csrf_token %}

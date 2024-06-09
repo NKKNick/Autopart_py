@@ -25,14 +25,21 @@ def work_detail(req,id):
 def change_status(req,id):
     if user_is_worker(user=req.user):
         if req.method == "POST":
+            now = timezone.now()
             assign = AssignWork.objects.get(pk=id)
-            assign.status = req.POST["status"]
             work_req = assign.work_request
+            if req.POST['status'] == '3':
+                if now > assign.end_date:
+                    assign.status = '5'
+                else:
+                    assign.status = req.POST["status"]
+            else:
+                assign.status = req.POST["status"]
             work_req.status = req.POST["status"]
             assign.note = req.POST["note"]
             work_req.save()
             assign.save()
-            return redirect('/calendar')
+            return redirect(f'/work/display/{id}')
         return redirect(work_detail)
     
 
@@ -48,6 +55,9 @@ def work_calendar(req):
         worker = Worker.objects.get(worker=req.user)
         assign = AssignWork.objects.filter(worker=worker).filter(status='2').order_by('end_date')
         day.append(0)
+        page = req.GET.get("page")
+        paginator=Paginator(assign,6)
+        assign2=paginator.get_page(page)
         for row in cal:
             for cell in row:
                 day.append(cell)
@@ -60,6 +70,7 @@ def work_calendar(req):
             'cur_mon':cur.month,
             'cur_year':cur.year,
             'assign':assign,
+            'assign2':assign2,
         }
         return render(req, 'work_calendar.html', context)
 
@@ -91,9 +102,9 @@ from django.core.paginator import Paginator
 def work_hist(req):
     if user_is_worker(user=req.user):
         worker = Worker.objects.get(worker=req.user)
-        assign=AssignWork.objects.filter(worker=worker).filter(status='3').order_by('-end_date')
+        assign=AssignWork.objects.filter(worker=worker).exclude(status='1').exclude(status='2').order_by('-end_date')
         page = req.GET.get("page")
-        paginator = Paginator(assign,3)
+        paginator = Paginator(assign,10)
         assign = paginator.get_page(page)
         context = {
             'assign':assign,
@@ -116,3 +127,6 @@ def prev_month(req):
 def now_month(req):
     current_date = timezone.now().date()
     return redirect(f'/calendar/{current_date.month}/{current_date.year}')
+
+def test(req):
+    return render(req,'test.html')

@@ -1,33 +1,42 @@
 {% extends 'sidebar.html' %}
-
-{% block title %}งานทั้งหมด{% endblock %}
+{% load static %}
+{% block title %}จัดการผู้ใช้{% endblock %}
 
 {% block content %}
 <div class="container-sm my-5">
     <div class="my-1 mx-4">
-        <h1>เลือกช่างซ่อม</h2>        
+        <h1>ช่างซ่อมทั้งหมด</h2>        
         <div class="row gap-3 my-5">
-        {% for i in worker %}
+        {% for worker,data in worker.items %}
         <div class="card col-4" style="width: 32%;">
             <div class="card-body ">
                 <div class="row">
-                    <div class="col-md-3"><img src="{{i.image.url}}" alt="" style="width: 100px; height: 100px;"></div>
+                    <div class="col-md-3"><img src="{{worker.image.url}}" alt="" style="width: 100px; height: 100px;"></div>
                     <div class="col-md-9 px-5">
-                        <h5 class="card-title">{{i.firstname}} {{i.lastname}}</h5>
-                        <h5>ชื่อผู้ใช้: {{i.worker.username}}</h5>
-                        <h5>รับซ่อม : {{i.specialization}} </h5>
-                        <p class="card-text">จำนวนงาน: {{ work_count|get_item:i}}</p>
+                        <h5 class="card-title">{{worker.firstname}} {{worker.lastname}}</h5>
+                        <h5>ชื่อผู้ใช้: {{worker.worker.username}}</h5>
+                        <h5>รับซ่อม : {{worker.specialization}} </h5>
 
+                    </div>
+                    <div class="mt-4">
+                        <div class="card-text">จำนวนงาน: {{data.work_count}} </div>
+                        <div class="card-text">งานเสร็จสิ้น: {{data.current_month_work_done}} </div>
+                        {% if data.latest_end_date != None %}
+                        <p class="card-text">วันครบกำหนด: {{data.latest_end_date | date:'d / m / Y'}} </p>
+                        {% else %}
+                        <p class="card-text">วันครบกำหนด: <small class="text-danger">ยังไม่มีงานที่มอบหมาย</small></p>
+                        {% endif %}
                     </div>
                    
                 </div>
                 
             </div>
             <div class="row gap-5 px-3">
-                <a href="{%url 'worker_assign' work_id=work_id worker_id=i.id %}" class="col-md-5 my-4 btn btn-warning"><i class="bi bi-wrench">&nbsp;</i>เลือกช่างซ่อม</a>
-                <a href="{%url 'admin_calendar' worker_id=i.id %}" class="col-md-5 my-4 btn btn-primary"><i class="bi bi-calendar2-week-fill">&nbsp;</i>ตารางงานช่าง</a>
+                <a href="{%url 'worker_assign' work_id=work_id worker_id=worker.id %}" class="col-md-5 my-4 btn btn-warning"><i class="bi bi-wrench">&nbsp;</i>เลือกช่างซ่อม</a>
+                <a href="{%url 'admin_calendar' worker_id=worker.id %}" class="col-md-5 my-4 btn btn-primary"><i class="bi bi-calendar2-week-fill">&nbsp;</i>ตารางงานช่าง</a>
             </div>   
           </div>
+          
           {% endfor %}
         </div>
     </div>

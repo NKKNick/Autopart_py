@@ -72,3 +72,24 @@ def deliver(req):
             return redirect('/pickup')
         else:
             return redirect('/cart')
+
+@login_required(login_url="/login")   
+def inc_cart(req,id):
+    cart = CartDetail.objects.get(pk=id)
+    if cart.amount < cart.product.stock:
+        cart.amount += 1
+        cart.save()
+        return redirect('/cart')
+    else :
+        return redirect('/cart')
+
+@login_required(login_url="/login")
+def dec_cart(req,id):
+    cart = CartDetail.objects.get(pk=id)
+    if cart.amount > 1:
+        cart.amount -= 1
+        cart.save()
+        return redirect('/cart')
+    else :
+        cart.delete()
+        return redirect('/cart')

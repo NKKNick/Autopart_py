@@ -14,6 +14,6 @@ urlpatterns = [
     path("prev/month",views.prev_month,name='prev_month'),
     path("now/month",views.now_month,name='now_month'),
     #work history
-    path('work/history',views.work_hist,name="work_history")
+    path('work/history',views.work_hist,name="work_history"),
 
 ] 

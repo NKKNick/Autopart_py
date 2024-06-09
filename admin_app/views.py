@@ -1,29 +1,30 @@
-from django.db.models import Sum, Max
+from collections import OrderedDict
+from django.db.models import Sum
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import permission_required
 from admin_app.forms import ProductForm, WorkerForm
 from custom.check_order import user_is_order, user_is_payment
 from user_cart.models import Cart, CartDetail
 from user_order.models import Order, OrderDetail, Payment
-from userinterface.models import product as Product
+from userinterface.models import AddStock, product as Product
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.db.models import Count
+from django.db.models import Count,F
 from worker_app.models import AssignWork, Bill, WorkRequest, Worker
 # Create your views here.
-from django.template.defaulttags import register
 from django.core.paginator import Paginator
 from django.utils import timezone
 import calendar
-@register.filter
-def get_item(dictionary, key):
-    return dictionary.get(key)
+from django.db.models.functions import TruncMonth
 
 
 
 @permission_required("admin",login_url="/")
 def dashboard(req):
     order=Order.objects.order_by('-created')
+    page = req.GET.get("page")
+    paginator=Paginator(order,10)
+    order=paginator.get_page(page)
     return render(req,'admin_order.html',{"order":order})
 
 
@@ -125,6 +126,9 @@ def create_worker(req,id):
 @permission_required('admin' ,login_url="/")
 def admin_product(req):
     product = Product.objects.all()
+    page = req.GET.get("page")
+    paginator=Paginator(product,10)
+    product=paginator.get_page(page)
     return render(req,'admin_product.html',{'product':product})
 
 @permission_required('admin' ,login_url="/")
@@ -176,24 +180,75 @@ def search_user(req):
 
 @permission_required('admin' ,login_url="/")
 def worker_show(req,id):
+    workers = Worker.objects.all()
     work_id = id
-    worker=Worker.objects.all()
-    work_counts = {}
-    for work in worker:
-        work_count = AssignWork.objects.filter(worker=work).filter(status="2").count()
-        work_counts[work] = work_count
-    
-    return render(req,"worker_show.html",{'worker':worker,"work_id":work_id,"work_count":work_counts})
+    worker_data = {}
+    now = timezone.now()
+    current_month = now.month
+    current_year = now.year
+
+    for worker in workers:
+        # Get the latest assignment end date
+        latest_end_date = worker.get_latest_assignment_end_date()
+
+        # Count of assignments status = กำลังดำเนินการ
+        work_count = AssignWork.objects.filter(worker=worker).filter(status="2").count()
+
+        # Count of assignments status = เสร็จสิ้น
+        current_month_work_done = (AssignWork.objects
+                                   .filter(worker=worker)
+                                   .filter(status='3')
+                                   .filter(start_date__month=current_month, start_date__year=current_year)
+                                   .count())
+
+        worker_data[worker] = {
+            'latest_end_date': latest_end_date,
+            'work_count': work_count,
+            'current_month_work_done': current_month_work_done
+        }
+
+    context = {
+        'worker': worker_data,
+        'work_id':work_id,
+    }
+
+    return render(req, "worker_show.html", context)
 
 @permission_required('admin' ,login_url="/")
 def worker_show2(req):
-    worker=Worker.objects.all()
-    work_counts = {}
-    for work in worker:
-        work_count = AssignWork.objects.filter(worker=work).filter(status="2").count()
-        work_counts[work] = work_count
+    workers = Worker.objects.all()
+    work_id = id
+    worker_data = {}
+    now = timezone.now()
+    current_month = now.month
+    current_year = now.year
+
+    for worker in workers:
+        # Get the latest assignment end date
+        latest_end_date = worker.get_latest_assignment_end_date()
+
+        # Count of assignments status = กำลังดำเนินการ
+        work_count = AssignWork.objects.filter(worker=worker).filter(status="2").count()
+
+        # Count of assignments status = เสร็จสิ้น
+        current_month_work_done = (AssignWork.objects
+                                   .filter(worker=worker)
+                                   .filter(status='3')
+                                   .filter(start_date__month=current_month, start_date__year=current_year)
+                                   .count())
+
+        worker_data[worker] = {
+            'latest_end_date': latest_end_date,
+            'work_count': work_count,
+            'current_month_work_done': current_month_work_done
+        }
+
+    context = {
+        'worker': worker_data,
+        'work_id':work_id,
+    }
     
-    return render(req,"worker_show2.html",{'worker':worker,"work_count":work_counts})
+    return render(req,"worker_show2.html",context)
 
 @permission_required('admin' ,login_url="/")
 def worker_assign(req,work_id,worker_id):
@@ -219,10 +274,6 @@ def delete_assign(req,id):
     assign = AssignWork.objects.get(pk=id)
     assign.delete()
     return redirect('/dashboard/display/assign')
-
-@permission_required('admin' ,login_url="/")
-def report(req):
-    return render(req,'report.html')
 
 @permission_required('admin' ,login_url="/")
 def pos(req):
@@ -413,15 +464,16 @@ def admin_calendar(req,worker_id):
         'cur_year':cur.year,
         'assign':assign,
         'count':count,
+        'worker_id':worker_id
     }
     return render(req, 'work_cal2.html', context)
 
 @permission_required('admin' ,login_url="/")  
-def admin_calendar2(req,year,month):
+def admin_calendar2(req,year,month,worker_id):
     cur = timezone.now().date()
     cal = calendar.monthcalendar(year,month)
     day = []
-    worker = Worker.objects.get(worker=req.user)
+    worker = Worker.objects.get(id=worker_id)
     assign = AssignWork.objects.filter(worker=worker).filter(status='2').order_by('end_date')
     day.append(0)
     for row in cal:
@@ -436,83 +488,107 @@ def admin_calendar2(req,year,month):
         'cur_mon':cur.month,
         'cur_year':cur.year,
         'assign':assign,
+        'worker_id':worker_id
     }
     return render(req, 'work_cal2.html', context)
 
 @permission_required('admin' ,login_url="/")  
-def next_month(req):
+def next_month(req,worker_id):
     current_date = timezone.now().date()
     next_month = current_date + timezone.timedelta(days=30)
-    return redirect(f'/dashboard/cal/{next_month.month}/{next_month.year}')
+    return redirect(f'/dashboard/cal/{next_month.month}/{next_month.year}/{worker_id}')
 
 @permission_required('admin' ,login_url="/")  
-def prev_month(req):
+def prev_month(req,worker_id):
     current_date = timezone.now().date()
     prev_month = current_date - timezone.timedelta(days=30) 
-    return redirect(f'/dashboard/cal/{prev_month.month}/{prev_month.year}')
+    return redirect(f'/dashboard/cal/{prev_month.month}/{prev_month.year}/{worker_id}')
 
 @permission_required('admin' ,login_url="/")  
-def now_month(req):
+def now_month(req,worker_id):
     current_date = timezone.now().date()
-    return redirect(f'/dashboard/cal/{current_date.month}/{current_date.year}')
+    return redirect(f'/dashboard/cal/{current_date.month}/{current_date.year}/{worker_id}')
 
-from django.db.models.functions import TruncMonth
+
 
 @permission_required('admin' ,login_url="/")  
 def report(req):
-    #ยอดขายตามสินค้า
-    order = OrderDetail.objects.filter(order__status='5').values('product__product_name').annotate(
-        total_amount=Sum('amount'),
-    )
-    #ยอดขายทั้งหมด groupby month
-    monthly_sales = OrderDetail.objects.filter(order__status='5').annotate(month=TruncMonth('updated')).values('month').annotate(
-        total_sales=Sum('price')
-    ).order_by('month')
-    monthly_cost = OrderDetail.objects.annotate(month=TruncMonth('updated')).values('month').annotate(
-        total_sales=Sum('product__cost')
-    ).order_by('month')
-    # Get the current date
-    current_date = timezone.now()
-    current_year = current_date.year
-    current_month = current_date.month
+    now = timezone.now()
+    current_year = now.year
+    current_month = now.month
+    # line chart
+    year_line = req.GET.get('year_line', now.year)
 
-    # ยอดขายเดือนนี้
+    monthly_sales = OrderDetail.objects.filter(order__status='5', updated__year=year_line).annotate(month=TruncMonth('updated')).values('month').annotate(
+        total_sales=Sum(F('product__price') * F('amount'))
+    ).order_by('month')
+
+
+    monthly_cost = AddStock.objects.filter(created__year=year_line).annotate(month=TruncMonth('created')).values('month').annotate(
+        total_cost = Sum(F('product__cost')*F('stock'))
+    ).order_by('month')
+
+    years_line = OrderDetail.objects.dates('updated', 'year')
+
+    #ยอดขายเดือนนี้
     this_month_sales = OrderDetail.objects.filter(
-        created__year=current_year,
-        created__month=current_month,
+        updated__year=current_year,
+        updated__month=current_month,
         order__status='5',
-    ).aggregate(total_sales=Sum('price'))
-    this_month_cost = OrderDetail.objects.filter(
-        created__year=current_year,
-        created__month=current_month,
-    ).aggregate(total_sales=Sum('product__cost'))
-    order_details = OrderDetail.objects.filter(
-        created__year=current_year,
-        created__month=current_month
-    )
+    ).aggregate(total_sales=Sum(F('product__price')*F('amount')))
 
+    this_month_cost = AddStock.objects.filter(
+        created__year = current_year,
+        created__month = current_month,
+    ).aggregate(total_sales=Sum(F('stock')*F('product__cost')))
+    # more info
     worker = Worker.objects.all().count()
     product = Product.objects.all().count()
     order_count = Order.objects.all().filter(status='2').count()
-    p_name = []
-    total_amount = []
-    for i in order:
-        p_name.append(i.get('product__product_name'))
-        total_amount.append(i.get('total_amount'))
+    # pie chart
+    # Get filter from templates
+    year = req.GET.get('year', now.year)
+    month = req.GET.get('month', now.month)
+
+    queryset = OrderDetail.objects.filter(
+        updated__year=year,
+        updated__month=month,
+        order__status='5',
+    )
+
+    # Annotate and aggregate total sales per product
+    this_month_product = queryset.values('product__product_name').annotate(
+        total_sales=Sum(F('amount') * F('product__price'))
+    )
+
+    # year and month for templates options
+    years_pie = OrderDetail.objects.dates('updated', 'year')
+    months_pie = OrderDetail.objects.filter(updated__year=year).dates('updated', 'month')
+    months_pie = list(OrderedDict.fromkeys(months_pie))
 
     context={
         'order':order,
         'product':product,
-        'p_name':p_name,
-        'total_amount':total_amount,
         'monthly_sales': monthly_sales,
         'monthly_cost': monthly_cost,
         'worker':worker,
         'product':product,
         'order_count':order_count,
+        #line chart
         'this_month_sales':this_month_sales,
         'this_month_cost':this_month_cost,
+        'years_line':years_line,
+        'selected_year_line': year_line,
+        #pie chart below
+        'this_month_product':this_month_product,
+        'years_pie':years_pie,
+        'months_pie':months_pie,
+        'now':now,
+        'selected_year_pie': year,
+        'selected_month_pie': month,
     }
+
+
     return render(req,'report.html',context)
 
 @permission_required('admin' ,login_url="/")  
@@ -527,3 +603,99 @@ def admin_change_status(req,id):
         print(assign.status,assign.work_request.status)
         return redirect('/dashboard/display/assign')
     return redirect('/dashboard/display/assign')
+
+
+@permission_required('admin' ,login_url="/")  
+
+def report_worker(req):
+    now = timezone.now()
+    
+    # Get year and month from request, default to current if not provided
+    selected_year_bar = int(req.GET.get('year_bar', now.year))
+    selected_month_bar = int(req.GET.get('month_bar', now.month))
+    
+    current_month_work_done = (AssignWork.objects
+                                .filter(status='3')
+                                .filter(start_date__month=now.month, start_date__year=now.year)
+                                .count())
+    current_month_work_have = (AssignWork.objects
+                                .filter(status='2')
+                                .count())
+    current_month_work_cancle = (AssignWork.objects
+                                .filter(status='4')
+                                .filter(start_date__month=now.month, start_date__year=now.year)
+                                .count())
+    current_unassign = WorkRequest.objects.filter(status='1').count()
+    worker_count = Worker.objects.all().count() 
+    # Get assignments filtered by the selected year and month
+    assignments = AssignWork.objects.filter(
+        status='3',
+        start_date__year=selected_year_bar,
+        start_date__month=selected_month_bar
+    )
+    worker_counts = assignments.values('worker__firstname', 'worker__lastname').annotate(work_count=Count('worker')).order_by('worker__firstname')
+    worker_data = {f"{worker['worker__firstname']} {worker['worker__lastname']}": worker['work_count'] for worker in worker_counts}
+    
+    
+    select_month_bar = AssignWork.objects.filter(start_date__year=selected_year_bar,status='3').dates('start_date', 'month')
+    select_month_bar = list(OrderedDict.fromkeys(select_month_bar))
+    select_year_bar=AssignWork.objects.dates('start_date', 'year', order='ASC')
+    #line chart
+    selected_year_line = req.GET.get('year_line',now.year)
+    completed_work_per_month = AssignWork.objects.filter(status='3', start_date__year=selected_year_line).annotate(
+        month_end_date=TruncMonth('start_date')
+    ).values('month_end_date').annotate(completed_count=Count('id')).order_by('month_end_date')
+    work_late = AssignWork.objects.filter(status='5', start_date__year=selected_year_line).annotate(
+        month_end_date=TruncMonth('start_date')
+    ).values('month_end_date').annotate(completed_count=Count('id')).order_by('month_end_date')
+    select_year_line = AssignWork.objects.filter(start_date__year=selected_year_line,status='3').dates('start_date', 'year')
+    context = {
+        'worker_data': worker_data,
+        'current_month_work_done': current_month_work_done,
+        'current_month_work_have': current_month_work_have,
+        'current_unassign': current_unassign,
+        'completed_work_per_month': completed_work_per_month,
+        'current_month_work_cancle': current_month_work_cancle,
+        'worker_count': worker_count,
+        'selected_year_bar': selected_year_bar,
+        'selected_month_bar': selected_month_bar,
+        'now': now,
+        'select_year_bar': select_year_bar,
+        'select_month_bar': select_month_bar,
+        'selected_year_line':selected_year_line,
+        'select_year_line':select_year_line,
+        'work_late':work_late,
+    }
+    return render(req, 'report_worker.html', context)
+
+
+@permission_required('admin' ,login_url="/")  
+def work_admin_history(req):
+    assign = AssignWork.objects.exclude(status='1').exclude(status='2').order_by('-start_date')
+    context = {
+        'assign':assign
+    }
+    return render(req,'admin_work_history.html',context)
+
+@permission_required('admin',login_url="/")
+def admin_delete_worker(req,id):
+    user = User.objects.filter(pk=id)
+    worker = Worker.objects.filter(worker=id)
+    user.is_staff = False
+    user.save()
+    worker.delete()
+    return redirect("/dashboard/manage/user")
+
+
+def add_stock(req,id):
+    product = Product.objects.get(pk=id)
+    stock = req.POST['stock']
+    keep_stock = AddStock.objects.create(
+        product=product,
+        name=product.product_name,
+        stock=stock
+    )
+    product.stock += int(req.POST['stock'])
+    product.save()
+    keep_stock.save()
+    return redirect('/dashboard/product')

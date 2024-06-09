@@ -36,7 +36,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <a class="text-decoration-none text-dark" href="{%url 'worker_show2' %}">
+                                <a class="text-decoration-none text-dark" href="{%url 'report_worker' %}">
                                     <div class="card my-card shadow text-center p-3">
                                         <h4>ช่างซ่อม <i class="fas fa-users"></i></h4>
                                         <h3>{{worker}}</h3>
@@ -67,20 +67,52 @@
     </div>
     <!--End Topside-->
 
-    <!--Graphs-->
+    <!--pie chart-->
+    
     <div class="container">
         <div class="row my-5">
             <div class="col-md-4">
                 <div class="bg-white">
+                    <form method="get" action="">
+                        <div class="row px-3 py-3">
+                            <div class="col">
+                                <label for="year">Year:</label>
+                                <select class="form-control" name="year" id="year">
+                                    <option value="{{now.year}}" hidden>{{now.year}}</option>
+                                    {% for y in years_pie %}
+                                        <option value="{{ y.year }}" {% if y.year|stringformat:"s" == selected_year_pie %}selected{% endif %}>
+                                            {{ y.year }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="month">Month:</label>
+                                <select class="form-control" name="month" id="month">
+                                    <option value="{{now.month}}" hidden>{{now|date:'M'}}</option>
+                                    {% for m in months_pie %}
+                                        <option value="{{ m.month }}" {% if m.month|stringformat:"s" == selected_month_pie %}selected{% endif %}>
+                                            {{ m|date:"F" }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col py-4">
+                                <button class="btn btn-info" type="submit">ยืนยัน    </button>
+                            </div>
+                        </div>
+                    </form>
+                      
                     <canvas id="myChart1" width="1250" height="1250"></canvas>
+                    
                     <script>
                         var ctx = document.getElementById('myChart1').getContext('2d');
                         var myChart1 = new Chart(ctx, {
                             type: 'pie',
                             data: {
-                                labels: [{%for i in p_name %} '{{i}}', {% endfor %}],
+                                labels: [{%for i in this_month_product %} '{{i.product__product_name}}', {% endfor %}],
                                 datasets: [{
-                                    data: [{%for i in total_amount %} {{i}}, {% endfor %}],
+                                    data: [{%for i in this_month_product %} {{i.total_sales}}, {% endfor %}],
                                     backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
                                     'rgba(255, 159, 64, 0.2)',
@@ -115,24 +147,64 @@
                     </script>
                 </div>
             </div>
+            <!-- line-->
             <div class="col-md-8">
                 <div class="bg-white">
+                    <form method="get" action="">
+                        <div class="row px-3 py-3">
+                            <div class="col-10">
+                                <label for="year">Year: </label>
+                                <select class="form-control" name="year_line">
+                                    <option value="{{now.year}}" hidden>{{now.year}}</option>
+                                    {% for y in years_line %}
+                                        <option value="{{ y.year }}" {% if y.year|stringformat:"s" == selected_year_line %}selected{% endif %}>
+                                            {{ y.year }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col py-4">
+                                <button class="btn btn-info" type="submit">ยืนยัน</button>
+                            </div>
+                        </div>
+                    </form>
                     <canvas id="myChart" width="1250" height="600"></canvas>
                     <script>
                         var ctx = document.getElementById('myChart').getContext('2d');
+                        var cost_dict = {};
+                        var sale_dict = {};
+                        {% for i in monthly_cost %}
+                        cost_dict['{{i.month|date:'F'}}'] = {{i.total_cost}} ;
+                        {% endfor %}
+                        {% for i in monthly_sales %}
+                        sale_dict['{{i.month|date:'F'}}'] = {{i.total_sales}} ;
+                        {% endfor %}
+                        var allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                        var labels = [];
+                        var linesale = [];
+                        var linecost = [];
+
+                        // Populate the arrays based on the dictionaries
+                        for (var month of allMonths) {
+                            labels.push(month);
+                            linesale.push(sale_dict[month] || 0);
+                            linecost.push(cost_dict[month] || 0);
+                        }
+                        
                         var myChart = new Chart(ctx, {
                             type: 'line',
                             data: {
-                                labels: [{% for sale in monthly_sales %}'{{ sale.month|date:"F" }}',{% endfor %}],
+                                labels: labels,
                                 datasets: [{
                                     label: 'ยอดขายทั้งหมด',
-                                    data: [{% for sale in monthly_sales %}{{sale.total_sales}},{% endfor %}],
+                                    data: linesale,
                                     fill: false,
                                     borderColor: 'rgb(54, 162, 235)',
                                     tension: 0.1
                                 },{
                                     label: 'ต้นทุนทั้งหมด',
-                                    data: [{% for sale in monthly_cost %}{{sale.total_sales}},{% endfor %}],
+                                    data: linecost,
                                     fill: false,
                                     borderColor: 'rgb(255, 99, 132)',
                                     tension: 0.1
@@ -159,22 +231,5 @@
     </div>
 </div>
 
-    <!--End Graphs-->
 
-    <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-        crossorigin="anonymous"></script>
-
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
-    -->
 {% endblock %}

@@ -12,6 +12,17 @@ class Worker(models.Model):
 
     def __str__(self) -> str:
         return f'{self.worker}'
+    
+    def get_assignments_end_dates(self):
+        assignments = AssignWork.objects.filter(worker=self)
+        end_dates = [assignment.end_date for assignment in assignments]
+        return end_dates
+
+    def get_latest_assignment_end_date(self):
+        latest_assignment = AssignWork.objects.filter(worker=self).filter(status='2').order_by('-end_date').first()
+        if latest_assignment:
+            return latest_assignment.end_date
+        return None
 
 REQUEST_CHOICE = (
     ("1","รอยืนยัน"),
@@ -20,7 +31,7 @@ REQUEST_CHOICE = (
     ("4","ถูกยกเลิก"),
 )
 class WorkRequest(models.Model):
-    customer = models.ForeignKey(User,on_delete=models.CASCADE)
+    admin = models.ForeignKey(User,on_delete=models.CASCADE)
     firstname = models.CharField(max_length=255,blank=True)
     lastname = models.CharField(max_length=255,blank=True)
     phone = models.CharField(max_length=255,blank=True,null=True)
@@ -39,6 +50,7 @@ WORK_CHOICE = (
         ("2", 'กำลังดำเนินการ'),
         ("3", 'เสร็จสิ้น'),
         ("4", 'ถูกยกเลิก'),
+        ("5", 'เลยกำหนด'),
 )
 
 class AssignWork(models.Model):

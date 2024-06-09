@@ -33,7 +33,7 @@
           </a>
           <hr>
           <ul class="nav nav-pills flex-column mb-auto">
-            {% if request.get_full_path == "/dashboard/report" %}
+            {% if request.path == "/dashboard/report" %}
             <li class="nav-item">
               <a href="{%url 'dashboard' %}" class="nav-link text-white" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
@@ -41,6 +41,7 @@
                 คำสั่งซื้อสินค้า
               </a>
             </li>
+
             {% elif order != none %}
             <li class="nav-item">
               <a href="{%url 'dashboard' %}" class="nav-link active" aria-current="page">
@@ -59,7 +60,7 @@
               </a>
             </li>
             {% endif %}
-            {% if request.get_full_path == "/dashboard/report" %}
+            {% if request.path == "/dashboard/report" %}
             <li>
               <a href="{%url 'work_display' %}" class="nav-link text-white">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
@@ -109,7 +110,7 @@
               </a>
             </li>
             {% endif %}
-            {% if request.get_full_path == "/dashboard/report" %}
+            {% if request.path == "/dashboard/report" %}
             <li>
               <a href="{%url 'admin_product' %}" class="nav-link text-white">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
@@ -152,9 +153,17 @@
             </li>
             {% endif %}
             <li>
-              {% if request.get_full_path == "/dashboard/report" %}
+              {% if request.path == "/dashboard/report" %}
               <li>
-                <a href="{%url 'manage_user' %}" class="nav-link active">
+                <a href="{%url 'report' %}" class="nav-link active">
+                  <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                  <i class="bi bi-clipboard-data"></i>&nbsp;
+                  รายงานผล
+                </a>
+              </li>
+              {% elif request.path == "/dashboard/report/worker" %}
+              <li>
+                <a href="{%url 'report' %}" class="nav-link active">
                   <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
                   <i class="bi bi-clipboard-data"></i>&nbsp;
                   รายงานผล

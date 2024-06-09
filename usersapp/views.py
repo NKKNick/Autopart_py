@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from custom.check_order import user_is_worker
 from usersapp.forms import ProfileForm
 from usersapp.models import UserProfile
-from django.utils import timezone
 # Create your views here.
 def login(req):
     if req.method == "POST":
@@ -18,15 +17,13 @@ def login(req):
             user = auth.authenticate(username=username,password=password)
             if user is not None:
                 auth.login(req,user)
-                if user.has_perm('admin'):
+                if user.is_superuser:
                     return redirect('/dashboard')
-                elif user_is_worker(user):
-                    cur = timezone.now().date()
-                    print(cur.year)
-                    return redirect(f'/work/{cur.year}/{cur.month}')
+                elif user.is_staff:
+                    return redirect('/calendar')
                 return redirect('/')
             else:
-                messages.warning(req,"ไม่พบบัญชีผู้ใช้")
+                messages.warning(req,"ชื่อผู้ใช้หรือรหัสผ่านผิด")
                 return redirect('/login')
     return render(req,'login.html')
 

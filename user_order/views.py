@@ -5,7 +5,7 @@ from custom.check_order import user_is_order
 
 from django.contrib.auth.models import User
 from custom.line_notify import send_image
-from user_order.models import *
+from user_order.models import Order,OrderDetail,Payment
 from user_cart.models import Cart,CartDetail
 from userinterface.models import product as Product
 from usersapp.models import UserProfile
@@ -106,5 +106,5 @@ def order_complete(req):
 
 @login_required(login_url="/login")
 def order_history(req):
-    orders=Order.objects.filter(customer=req.user)
+    orders=Order.objects.filter(customer=req.user).order_by('-created')
     return render(req,"order_history.html",{"orders":orders})

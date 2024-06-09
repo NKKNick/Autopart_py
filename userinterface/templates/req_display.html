@@ -23,8 +23,10 @@
                         <div class="text-secondary">&nbsp{{i.get_status_display}}</div>
                         {% elif i.status == "2" %}
                         <div class="text-primary">&nbsp{{i.get_status_display}}</div>
-                        {% else %}
+                        {% elif i.status == "3" %}
                         <div style="color: #2dc258">&nbsp{{i.get_status_display}}</div>
+                        {% else %}
+                        <div class="text-danger">&nbsp{{i.get_status_display}}</div>
                         {% endif %}
                     </div>
                 </div>

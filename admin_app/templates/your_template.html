@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Work Per Month</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+</head>
+<body>
+    <h1>Completed Work Per Month</h1>
+    
+    <!-- Filter Form -->
+    <form method="get" action="">
+        <label for="year">Year:</label>
+        <select name="year" id="year">
+            <option value="{{now.year}}" hidden>{{now.year}}</option>
+            {% for y in years %}
+                <option value="{{ y.year }}" {% if y.year|stringformat:"s" == selected_year %}selected{% endif %}>
+                    {{ y.year }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="month">Month:</label>
+        <select name="month" id="month">
+            <option value="{{now.month}}" hidden>{{now|date:'M'}}</option>
+            {% for m in months %}
+                <option value="{{ m.month }}" {% if m.month|stringformat:"s" == selected_month %}selected{% endif %}>
+                    {{ m|date:"F" }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+    <div>
+        <canvas id="myChart1" width="1250" height="1250"></canvas>
+                    
+                    <script>
+                        var ctx = document.getElementById('myChart1').getContext('2d');
+                        var myChart1 = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: [{%for i in this_month_product %} '{{i.product__product_name}}', {% endfor %}],
+                                datasets: [{
+                                    data: [{%for i in this_month_product %} {{i.total_sales}}, {% endfor %}],
+                                    backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)',
+                                    'rgba(255, 205, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(201, 203, 207, 0.2)'
+                                    ],
+                                    borderColor: [
+                                    'rgb(255, 99, 132)',
+                                    'rgb(255, 159, 64)',
+                                    'rgb(255, 205, 86)',
+                                    'rgb(75, 192, 192)',
+                                    'rgb(54, 162, 235)',
+                                    'rgb(153, 102, 255)',
+                                    'rgb(201, 203, 207)'
+                                    ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                            options: {
+                                legend: {display: true},
+                                title: {
+                                    display: true,
+                                    text: "ยอดขายของสินค้าทั้งหมด"
+                                    }
+                                }
+                                });
+
+
+                    </script>
+    </div>
+    
+</body>
+</html>

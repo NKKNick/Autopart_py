@@ -25,14 +25,6 @@ def detail(req,id):
 def contact(req):
     return render(req,'contact.html')
 
-def stock(req):
-    product = Product.objects.all()
-    for i in product:
-        if i.stock <= 0:
-            message = f"{i.product_name} เหลือ {i.stock}"
-            send_text(message)
-    return render(req, 'testnot.html')
-
 def search_product(req):
     search = req.GET['search']
     if search:

@@ -23,6 +23,7 @@
             </thead>
             <tbody>
                 {% for i in product %}
+                
                 <tr>
                     <td style="width: 10%;">{{i.id}}</td>
                     <td style="width: 10%;" class=""><img src="{{i.picture.url}}" alt="image" style="width: 50px; height: 50px;"></td>
@@ -30,21 +31,62 @@
                     <td class="py-4">{{i.brand}}</td>
                     <td class="py-4">{{i.price}}</td>
                     <td class="py-4">{{i.stock}}</td>
-                    <td style="width: 15%;">
+                    <td style="width: 20%;">
                         <div>
                             <a href="{%url 'product_update' i.id %}" class="my-2 btn btn-warning"><i class="bi bi-pencil-square">&nbsp;</i>แก้ไข</a>
+                            <button data-bs-target="#exampleModalToggle{{i.id}}" data-bs-toggle="modal" class="my-2 btn btn-primary"><i class="bi bi-plus-circle">&nbsp;</i>เพิ่มสต็อก</button>
+                            
                         </div>
                     </td>
-                    <td style="width: 15%;">
+                    <td style="width: 10%;">
                         <div>
                             <a href="{%url 'product_delete' i.id %}" class="my-2 btn btn-danger"><i class="bi bi-trash">&nbsp;</i>ลบสินค้า</a>
                         </div>
                     </td>
                 </tr>
+                <form action="{%url 'add_stock' i.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal fade" id="exampleModalToggle{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">สต็อกสินค้า</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="my-3">
+                                    <label for="test">จำนวนสต็อกปัจจุบัน:</label>
+                                    <input class="form-control" type="number" name="test" value="{{i.stock}}" readonly>
+                                    <label for="test">เพิ่ม:</label>
+                                    <input class="form-control" type="number" name="stock" id="test" value="0">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button class="btn btn-primary" type="submit">ยืนยัน</button>
+                              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">ยกเลิก</button>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </form>
                 {% endfor %}
             </tbody>
             </table>
+            
+            
+            <nav aria-label="product-pagination" class="media-container-row">
+                <ul class="pagination pagination-md">
+                  {% for i in product.paginator.page_range %}
+                    {% if i != product.number  %}
+                    <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                    {% else %}
+                    <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+            </nav>
     </div>
 </div>
+
 
 {% endblock %}

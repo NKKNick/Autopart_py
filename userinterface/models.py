@@ -19,3 +19,12 @@ class product(models.Model):
     return self.cost * self.stock
   
 
+class AddStock(models.Model):
+  product = models.ForeignKey(product,on_delete=models.DO_NOTHING)
+  name = models.CharField(max_length=255,default='')
+  stock = models.IntegerField()
+  created = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self) -> str:
+    return f'{self.product} add stock {self.stock}'
+  

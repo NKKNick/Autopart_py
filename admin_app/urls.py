@@ -26,16 +26,17 @@ urlpatterns = [
     path("dashboard/assign/work/<int:work_id>/<int:worker_id>",views.worker_assign,name="worker_assign"),
     path("dashboard/worker",views.worker_show2,name="worker_show2"),
     path("assign/delete/<int:id>",views.delete_assign,name="delete_assign"),
+    path("worker/delete/<int:id>",views.admin_delete_worker,name="worker_delete"),
     
-
     #worker_calendar
     path("dashboard/cal/<int:worker_id>",views.admin_calendar,name="admin_calendar"),
-    path("dashboard/cal/<int:month>/<int:year>",views.admin_calendar2,name="work_calendar"),
-    path("next/month2",views.next_month,name='next_month2'),
-    path("prev/month2",views.prev_month,name='prev_month2'),
-    path("now/month2",views.now_month,name='now_month2'),
+    path("dashboard/cal/<int:month>/<int:year>/<int:worker_id>",views.admin_calendar2,name="work_calendar"),
+    path("next/month2/<int:worker_id>",views.next_month,name='next_month2'),
+    path("prev/month2/<int:worker_id>",views.prev_month,name='prev_month2'),
+    path("now/month2/<int:worker_id>",views.now_month,name='now_month2'),
     #report
     path("dashboard/report", views.report,name="report"),
+    path("dashboard/report/worker",views.report_worker,name="report_worker"),
     #assign bill
     path("dashboard/display/work_detail/<int:id>",views.admin_work_detail,name="admin_work_detail"),
     path("dashboard/create_bill/<int:id>",views.create_bill,name="create_bill"),
@@ -45,8 +46,10 @@ urlpatterns = [
     path("dashboard/dec/<int:id>", views.dec_cart,name="pos_dec"),
     path("dashboard/add_cart/<int:id>", views.admin_cart,name="admin_cart"),
     path("dashboard/delete_cart/<int:id>", views.delete_pos,name="pos_delete"),
+    path("dashboard/add_stock/<int:id>",views.add_stock,name="add_stock"),
     #req work
     path("dashboard/repair",views.repair,name="repair"),
     path("repair/delete/<int:id>",views.delete_repair,name="repair_delete"),
     path("dashboard/change/<int:id>",views.admin_change_status,name="admin_change"),
+    path("dashboard/work/history",views.work_admin_history,name="admin_work_history"),   
 ]

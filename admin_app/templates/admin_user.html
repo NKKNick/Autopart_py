@@ -43,7 +43,7 @@
             <td class="py-5"></td>
             {% elif i.is_staff %}
             <td>ช่างซ่อม</td>
-            <td class="py-5"></td>
+            <td><a href="{%url 'worker_delete' i.id %}" class="my-4 btn btn-danger"><i class="bi bi-dash-circle">&nbsp;</i>ลบช่างซ่อม</a></a></td>
             {% else %}
             <td>ผู้ใช้ทั่วไป</td>
             <td><a href="{%url 'create_worker' i.id %}" class="my-4 btn btn-warning"><i class="bi bi-plus-circle">&nbsp;</i>เพิ่มช่างซ่อม</a></td>

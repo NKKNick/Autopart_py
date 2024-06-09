@@ -9,50 +9,53 @@
 {% endblock %}
 
 {% block content %}
-<div class="my-5">
-    {%for i in assign %}
-        <div class="mt-2 d-flex justify-content-center">
-            <div class="card mt-2 w-75 rounded-0">
-                <div class="px-3">
-                    <div class="row card-header" style="background-color: white;">
-                        <div class="col"><strong>รหัสแจ้งซ่อม: {{i.id}}</strong></div>
-                        <div class="col d-flex justify-content-end">สถานะ: 
-                            {%if i.status == "4" %}
-                            <div class="text-danger">&nbsp{{i.get_status_display}}</div>
-                            {% elif i.status == "3" %}
-                            <div style="color: #2dc258">&nbsp{{i.get_status_display}}</div>
-                            {% else %}
-                            <div class="text-secondary">&nbsp{{i.get_status_display}}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">
-                            <p>อะไหล่ : {{i.work_request.car_part}}</p>
-                            <p>ยี่ห้อ : {{i.work_request.car_brand}}</p>
-                            <p>วันที่ครบกำหนด : {{i.work_request.end_date |date:"d/m/Y"}}</p>
-                            <a href="{%url 'work_detail' i.id %}" class=" my-2 btn btn-primary">รายละเอียด</a>
-                        </div>
+<div class="container">
+    <div class="my-5 table-responsive-md">
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>รหัส</th>
+                    <th>อะไหล่</th>
+                    <th>ยี่ห้อ</th>
+                    <th>ครบกำหนด</th>
+                    <th>สถานะ</th>
+                    <th style="width: 20%;"></th>
     
-                    </div>
-                </div>
-                
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in assign %}
+                {%if i.status == "4" or i.status == "5" %}
+                <tr class="table-danger">
+                {% elif i.status == "3" %}
+                <tr class="table-success">
+                {% else %}
+                <tr>
+                {% endif %}
+                    <td>{{i.id}}</td>
+                    <td>{{i.work_request.car_part}}</td>
+                    <td>{{i.work_request.car_brand}}</td>
+                    <td>{{i.end_date |date:"d/m/Y"}}</td>
+                    <td>{{i.get_status_display}}</td>
+                    <td><a href="{%url 'work_detail' i.id %}" class=" my-2 btn btn-primary">รายละเอียด</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+            <div class="d-flex justify-content-center my-5">
+                <nav aria-label="...">
+                    <ul class="pagination pagination-md">
+                        {% for i in assign.paginator.page_range %}
+                        {% if i != assign.number  %}
+                        <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% else %}
+                        <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </nav>
             </div>
-        </div>
-        {% endfor %}
-        <div class="d-flex justify-content-center my-5">
-            <nav aria-label="...">
-                <ul class="pagination pagination-md">
-                    {% for i in assign.paginator.page_range %}
-                    {% if i != assign.number  %}
-                    <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-                    {% else %}
-                    <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-              </nav>
-        </div>
     </div>
+</div>
 
 {% endblock %}
