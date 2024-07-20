@@ -10,6 +10,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
 colorama==0.4.6
 Django==4.2.7
+graphviz==0.20.3
 icalendar==5.0.12
 idna==3.6
 kombu==5.3.7
@@ -17,6 +18,8 @@ line-notify==0.1.4
 mysqlclient==2.2.1
 Pillow==10.1.0
 prompt-toolkit==3.0.43
+pydot==3.0.1
+pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 pytz==2024.1
 redis==5.0.4
@@ -24,6 +27,7 @@ requests==2.31.0
 setuptools==68.0.0
 six==1.16.0
 sqlparse==0.4.4
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1717802530399/work
 tzdata==2023.3
 urllib3==2.1.0
 vine==5.1.0
