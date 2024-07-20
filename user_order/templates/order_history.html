@@ -48,6 +48,15 @@
                         <td>{{i.total | intcomma }}</td>
                         {% if i.status == "1" %}
                         <td><a href="{%url 'payment' i.id %}">{{i.get_status_display}}</a></td>
+                        {% elif i.status == "2" %}
+                        <td class="">{{i.get_status_display}}</td>
+                        {% elif i.status == "3" or i.status == "4"%}
+                        <td class="text-primary">{{i.get_status_display}}</td>
+                        {% elif i.status == "5" %}
+                        <td class="text-success">{{i.get_status_display}}</td>
+                        {% elif i.status == "7" or i.status == "8" %}
+                        <td class="text-danger">{{i.get_status_display}}</td>
+
                         {% else %}
                         <td>{{i.get_status_display}}</td>
                         {% endif %}

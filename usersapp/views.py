@@ -11,7 +11,7 @@ def login(req):
         username = req.POST["username"]
         password = req.POST["password"]
         if username == "" or password=="":
-            messages.warning(req,"กรุณาป้อนข้อมูลให้ครบ")
+            messages.warning(req,"กรุณากรอกข้อมูลให้ครบ")
             return redirect("/login")
         else:
             user = auth.authenticate(username=username,password=password)
@@ -23,7 +23,7 @@ def login(req):
                     return redirect('/calendar')
                 return redirect('/')
             else:
-                messages.warning(req,"ชื่อผู้ใช้หรือรหัสผ่านผิด")
+                messages.warning(req,"ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
                 return redirect('/login')
     return render(req,'login.html')
 
@@ -36,7 +36,7 @@ def register(req):
         password = req.POST["password"]
         password2 = req.POST["password2"]
         if username=='' or email=='' or password=='' or password2=='':
-            messages.warning(req,'กรุณาป้อนข้อมูลให้ครบ')
+            messages.warning(req,'กรุณากรอกข้อมูลให้ครบ')
             return redirect("/register")
         elif password != password2:
             messages.warning(req,'รหัสผ่านไม่ตรงกัน')
@@ -70,7 +70,6 @@ def user_profile(req):
         if req.method == "POST":
             profile = UserProfile.objects.get(user=req.user.id)
             form = ProfileForm(req.POST,req.FILES,instance=profile)
-            print(form.data)
             if form.is_valid():
                 form.instance.owner = req.user
                 form.save()

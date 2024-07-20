@@ -20,7 +20,7 @@ urlpatterns = [
     path("dashboard/create/user",views.create_user,name="create_user"),
     path("dashboard/create/worker/<int:id>",views.create_worker,name="create_worker"),
     #worker
-    path("dashboard/display/worker",views.work_display,name="work_display"),
+    path("dashboard/display/work",views.work_display,name="work_display"),
     path("dashboard/display/assign",views.assign_display,name="assign_display"),
     path("dashboard/show/worker/<int:id>",views.worker_show,name="worker_show"),
     path("dashboard/assign/work/<int:work_id>/<int:worker_id>",views.worker_assign,name="worker_assign"),

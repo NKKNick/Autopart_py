@@ -1,7 +1,9 @@
+from typing import Iterable
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from userinterface.models import product as Product
+from datetime import datetime
 
 ORDER_CHOICES = (
     ("1",'ยังไม่ได้ชำระ'),
@@ -22,8 +24,24 @@ class Order(models.Model):
     status = models.CharField(max_length=20,choices= ORDER_CHOICES,default=1)
     customer = models.ForeignKey(User,on_delete=models.CASCADE,default=None)
     created = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(null=True,blank=True,auto_now=True)
+    complete = models.DateTimeField(null=True,blank=True)
     def __str__(self) -> str:
         return f'{self.customer.username}'
+    
+    def save(self, *args, **kwargs):
+        if self.status == "5":
+            self.complete = datetime.now()
+            super().save(*args, **kwargs)
+        elif self.status == "3":
+            order_detail = OrderDetail.objects.filter(order=self)
+            for i in order_detail:
+                i.product.stock -= i.amount
+                i.save()
+                i.product.save()
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
 class OrderDetail(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)

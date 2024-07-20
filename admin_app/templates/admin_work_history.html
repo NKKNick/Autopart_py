@@ -16,7 +16,8 @@
                 <th scope="col">อะไหล่</th>
                 <th scope="col">ยี่ห้อ</th>
                 <th scope="col">ช่างซ่อม</th>
-                <th scope="col">วันที่หมอบหมาย</th>
+                <th scope="col">สถานะ</th>
+                <th scope="col">วันที่เสร็จสิ้น</th>
                 <th scope="col">วันที่ครบกำหนด</th>
                 <th scope="col"></th>
               </tr>
@@ -32,9 +33,10 @@
                 <td>{{i.work_request.car_part}}</td>
                 <td>{{i.work_request.car_brand}}</td>
                 <td>{{i.worker.firstname}} {{i.worker.lastname}}</td>
-                <td>{{i.start_date | date:'d M Y'}}</td>
+                <td>{{i.get_status_display}}</td>
+                <td>{{i.update |date:'d /m /Y'}}</td>
                 {% if i.end_date != None %}
-                <td>{{i.end_date | date:'d M Y'}}</td>
+                <td>{{i.end_date | date:'d /m /Y'}}</td>
                 {%else %}
                 <td></td>
                 {% endif %}
@@ -43,6 +45,17 @@
               {% endfor %}
             </tbody>
           </table>
+          <nav aria-label="product-pagination" class="media-container-row">
+            <ul class="pagination pagination-md">
+              {% for i in assign.paginator.page_range %}
+                {% if i != assign.number  %}
+                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                {% else %}
+                <li class="page-item active"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+        </nav>
     </div>
 </div>
 

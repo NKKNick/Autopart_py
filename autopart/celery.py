@@ -19,7 +19,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'delete-unpaid-orders-every-day': {
         'task': 'admin_app.tasks.delete_unpaid_orders',
-        'schedule': 600.0,  # Schedule task to run every day at midnight
+        'schedule': 100.0,  # Schedule task to run every day at midnight
     },
     # Add other periodic tasks here
 }

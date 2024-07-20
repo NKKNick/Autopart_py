@@ -39,8 +39,11 @@ def req_display(req):
         profile = UserProfile.objects.get(user=req.user.id)
         w_req = WorkRequest.objects.filter(phone=profile.phone)
         w_sort = w_req.order_by('-created')
+        page = req.GET.get("page")
+        paginator=Paginator(w_sort,5)
+        work=paginator.get_page(page)
         context ={
-            'w_req':w_sort,
+            'w_req':work,
         }
         return render(req,'req_display.html',context)
     else:

@@ -4,7 +4,6 @@ from worker_app import views
 
 
 urlpatterns = [
-    path("work/display",views.display_work,name="display_work"),
     path("work/display/<int:id>",views.work_detail,name="work_detail"),
     path("work/change_status/<int:id>",views.change_status,name="change_status"),
     #calendar 

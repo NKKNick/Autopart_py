@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'user_order',
     'worker_app',
     'admin_app',
+
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,4 @@ LINE_NOTIFY_TOKEN = 'obQYdfCIAcBJCbwHXWCh5aHsSHwfSV50l4pumQvxBKX'
 #celery settting
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+

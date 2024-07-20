@@ -206,9 +206,10 @@ def worker_show(req,id):
             'work_count': work_count,
             'current_month_work_done': current_month_work_done
         }
+        sorted_worker_data = dict(sorted(worker_data.items(), key=lambda item: item[1]['current_month_work_done']))
 
     context = {
-        'worker': worker_data,
+        'worker': sorted_worker_data,
         'work_id':work_id,
     }
 
@@ -421,7 +422,7 @@ def repair(req):
         note = req.POST["note"]
         end_date = req.POST["enddate"]
         workreq=WorkRequest.objects.create(
-            customer=req.user,
+            admin=req.user,
             firstname=firstname,
             lastname=lastname,
             car_part=car_part,
@@ -431,7 +432,7 @@ def repair(req):
             end_date = end_date,
         )
         workreq.save()
-        return redirect('/dashboard/display/worker')
+        return redirect('/dashboard/display/work')
     return render(req,'create_repair.html')
 
 @permission_required('admin' ,login_url="/") 
@@ -544,7 +545,7 @@ def report(req):
     # more info
     worker = Worker.objects.all().count()
     product = Product.objects.all().count()
-    order_count = Order.objects.all().filter(status='2').count()
+    order_count = Order.objects.filter(status='2').count()
     # pie chart
     # Get filter from templates
     year = req.GET.get('year', now.year)
@@ -564,8 +565,8 @@ def report(req):
     # year and month for templates options
     years_pie = OrderDetail.objects.dates('updated', 'year')
     months_pie = OrderDetail.objects.filter(updated__year=year).dates('updated', 'month')
-    months_pie = list(OrderedDict.fromkeys(months_pie))
 
+    
     context={
         'order':order,
         'product':product,
@@ -636,13 +637,13 @@ def report_worker(req):
     worker_counts = assignments.values('worker__firstname', 'worker__lastname').annotate(work_count=Count('worker')).order_by('worker__firstname')
     worker_data = {f"{worker['worker__firstname']} {worker['worker__lastname']}": worker['work_count'] for worker in worker_counts}
     
-    
+
     select_month_bar = AssignWork.objects.filter(start_date__year=selected_year_bar,status='3').dates('start_date', 'month')
     select_month_bar = list(OrderedDict.fromkeys(select_month_bar))
     select_year_bar=AssignWork.objects.dates('start_date', 'year', order='ASC')
     #line chart
     selected_year_line = req.GET.get('year_line',now.year)
-    completed_work_per_month = AssignWork.objects.filter(status='3', start_date__year=selected_year_line).annotate(
+    completed_work_per_month = AssignWork.objects.filter(status__in=['3','5'], start_date__year=selected_year_line).annotate(
         month_end_date=TruncMonth('start_date')
     ).values('month_end_date').annotate(completed_count=Count('id')).order_by('month_end_date')
     work_late = AssignWork.objects.filter(status='5', start_date__year=selected_year_line).annotate(
@@ -672,6 +673,9 @@ def report_worker(req):
 @permission_required('admin' ,login_url="/")  
 def work_admin_history(req):
     assign = AssignWork.objects.exclude(status='1').exclude(status='2').order_by('-start_date')
+    page = req.GET.get("page")
+    paginator=Paginator(assign,10)
+    assign=paginator.get_page(page)
     context = {
         'assign':assign
     }
@@ -686,7 +690,7 @@ def admin_delete_worker(req,id):
     worker.delete()
     return redirect("/dashboard/manage/user")
 
-
+@permission_required('admin',login_url="/")
 def add_stock(req,id):
     product = Product.objects.get(pk=id)
     stock = req.POST['stock']

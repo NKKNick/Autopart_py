@@ -13,13 +13,8 @@ class Worker(models.Model):
     def __str__(self) -> str:
         return f'{self.worker}'
     
-    def get_assignments_end_dates(self):
-        assignments = AssignWork.objects.filter(worker=self)
-        end_dates = [assignment.end_date for assignment in assignments]
-        return end_dates
-
     def get_latest_assignment_end_date(self):
-        latest_assignment = AssignWork.objects.filter(worker=self).filter(status='2').order_by('-end_date').first()
+        latest_assignment = AssignWork.objects.filter(worker=self).filter(status='2').order_by('end_date').first()
         if latest_assignment:
             return latest_assignment.end_date
         return None

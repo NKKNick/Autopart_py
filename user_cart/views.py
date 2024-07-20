@@ -31,10 +31,8 @@ def cart(request):
 def add_cart(req, id):
     product = Product.objects.get(pk=id)
     try:
-        # ดึงข้อมูลที่มีอยู่แล้ว
         cart = Cart.objects.get(customer=req.user)
     except Cart.DoesNotExist:
-        # ถ้าไม่มีสร้างใหม่
         cart = Cart.objects.create(customer=req.user)
 
     try:
@@ -56,10 +54,7 @@ def add_cart(req, id):
 
 @login_required(login_url="/login")
 def delete_cart(req,id):
-    product = Product.objects.get(pk=id)
-    cart = Cart.objects.get(customer=req.user)
-    cartDetail=CartDetail.objects.get(product=product,cart=cart)
-    cartDetail.delete()
+    CartDetail.objects.get(pk=id).delete()
     return redirect("/cart")
 
 @login_required(login_url="/login")

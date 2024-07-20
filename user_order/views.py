@@ -1,3 +1,4 @@
+import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -43,7 +44,7 @@ def order(req):
                 order_detail.save()
                 i.delete()
             cart.delete()
-            return redirect('/order/payment/%d'%order.id)
+            return redirect(f'/order/payment/{order.id}')
         try:
             profile = UserProfile.objects.get(user=req.user)
             return render(req,'orderwp.html',{'profile':profile})
@@ -63,11 +64,11 @@ def payment(req,id):
         #เปลี่ยน status จาก "ยังไม่ได้ชำระ" เป็น "ตรวจสอบสลิป"
         order.status = "2"
         order.save()
-        message = f'\nผู้ซื้อ: {order.fullname}\nที่อยู่: {order.address}\nเบอร์ติดต่อ: {order.phone}\nจำนวนเงินที่ต้องชำระ: {order.total}'
-        payment_url = payment.image.url.replace('/','',1)
-        image_path = payment_url     
-        send_image(message,image_path)
-        return redirect('/order/history')
+        # message = f'\nผู้ซื้อ: {order.fullname}\nที่อยู่: {order.address}\nเบอร์ติดต่อ: {order.phone}\nจำนวนเงินที่ต้องชำระ: {order.total}'
+        # payment_url = payment.image.url.replace('/','',1)
+        # image_path = payment_url     
+        # send_image(message,image_path)
+        return redirect('/order/complete')
     return render(req,'payment.html',{'order':order})
 
 @login_required(login_url="/login")
@@ -75,7 +76,15 @@ def order_detail(req,id):
     order = Order.objects.get(pk=id)
     if order.customer == req.user:
         obj=OrderDetail.objects.filter(order=order)
-        return render(req,'orderdetails.html',{'orders':obj,'order':order})
+        earliest =order.created+datetime.timedelta(days=2)
+        latest = order.created+datetime.timedelta(days=5)
+        context = {
+            'orders':obj,
+            'order':order,
+            'early':earliest,
+            'late':latest,
+        }
+        return render(req,'orderdetails.html',context)
     else:
         redirect("order/history")
 

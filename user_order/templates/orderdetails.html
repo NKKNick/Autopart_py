@@ -9,6 +9,20 @@
                 </h4>
             </div>
             <div class="row my-5">
+                {% if order.status == '3' or order.status == '4' %}
+                <h4>จะได้รับสินค้าภายในวันที่</h4>
+                <h3>{{early |date:'d /m /Y'}} - {{late |date:'d /m /Y'}}</h3>
+                {% elif order.status == '1' or order.status == '2' %}
+                <h4>ทำการสร้างออเดอร์เมื่อ</h4>
+                <h3>{{order.created |date:'d /m /Y'}}</h3>
+                {% elif order.status == '5' %}
+                <h4>ทำการส่งเมื่อ</h4>
+                <h3>{{order.complete |date:'d /m /Y'}}</h3>
+
+                {% elif order.status == '7' or order.status == '8' %}
+                <h4>ถูกยกเลิกเมื่อ</h4>
+                <h3>{{order.update |date:'d /m /Y'}}</h3>
+                {% endif %}
                 <table class="table text-center table-bordered my-5">
                     <thead>
                       <tr>
