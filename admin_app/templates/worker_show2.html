@@ -1,5 +1,5 @@
 {% extends 'sidebar.html' %}
-
+{% load static %}
 {% block title %}จัดการผู้ใช้{% endblock %}
 
 {% block content %}
@@ -11,8 +11,12 @@
         <div class="card col-4" style="width: 32%;">
             <div class="card-body ">
                 <div class="row">
+                    {% if worker.image.url != null %}
                     <div class="col-md-3"><img src="{{worker.image.url}}" alt="" style="width: 100px; height: 100px;"></div>
-                    <div class="col-md-9 px-5">
+
+                    {% else %}
+                    <div class="col-md-3"><img src="{%static 'images/unknow.jpg' %}" alt="" style="width: 100px; height: 100px;"></div>
+                    {% endif %}                    <div class="col-md-9 px-5">
                         <h5 class="card-title">{{worker.firstname}} {{worker.lastname}}</h5>
                         <h5>ชื่อผู้ใช้: {{worker.worker.username}}</h5>
                         <h5>รับซ่อม : {{worker.specialization}} </h5>

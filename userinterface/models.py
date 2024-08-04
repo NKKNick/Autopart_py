@@ -20,7 +20,7 @@ class product(models.Model):
   
 
 class AddStock(models.Model):
-  product = models.ForeignKey(product,on_delete=models.DO_NOTHING)
+  product = models.ForeignKey(product,on_delete=models.CASCADE)
   name = models.CharField(max_length=255,default='')
   stock = models.IntegerField()
   created = models.DateTimeField(auto_now_add=True)

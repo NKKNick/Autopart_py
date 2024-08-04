@@ -683,7 +683,7 @@ def work_admin_history(req):
 
 @permission_required('admin',login_url="/")
 def admin_delete_worker(req,id):
-    user = User.objects.filter(pk=id)
+    user = User.objects.get(pk=id)
     worker = Worker.objects.filter(worker=id)
     user.is_staff = False
     user.save()
