@@ -90,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'autopart',
         'USER': 'root',
-        'PASSWORD': 'N!ck3541',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }
