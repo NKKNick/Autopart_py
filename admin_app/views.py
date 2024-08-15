@@ -439,7 +439,7 @@ def repair(req):
 def delete_repair(req,id):
     work_req = WorkRequest.objects.get(pk=id)
     work_req.delete()
-    return redirect('/dashboard/display/worker')
+    return redirect('/dashboard/display/work')
 
 @permission_required('admin' ,login_url="/")  
 def admin_calendar(req,worker_id):
