@@ -439,7 +439,7 @@ def repair(req):
 def delete_repair(req,id):
     work_req = WorkRequest.objects.get(pk=id)
     work_req.delete()
-    return redirect('/dashboard/display/worker')
+    return redirect('/dashboard/display/work')
 
 @permission_required('admin' ,login_url="/")  
 def admin_calendar(req,worker_id):
@@ -517,6 +517,8 @@ def report(req):
     now = timezone.now()
     current_year = now.year
     current_month = now.month
+    year = req.GET.get('year', now.year)
+    month = req.GET.get('month', now.month)
     # line chart
     year_line = req.GET.get('year_line', now.year)
 
@@ -533,23 +535,29 @@ def report(req):
 
     #ยอดขายเดือนนี้
     this_month_sales = OrderDetail.objects.filter(
-        updated__year=current_year,
-        updated__month=current_month,
-        order__status='5',
+    updated__year=year,
+    updated__month=month,
+    order__status='5',
     ).aggregate(total_sales=Sum(F('product__price')*F('amount')))
 
     this_month_cost = AddStock.objects.filter(
-        created__year = current_year,
-        created__month = current_month,
+        created__year=year,
+        created__month=month,
     ).aggregate(total_sales=Sum(F('stock')*F('product__cost')))
     # more info
     worker = Worker.objects.all().count()
     product = Product.objects.all().count()
-    order_count = Order.objects.filter(status='2').count()
+    order_count = Order.objects.filter(
+        status='5',
+        created__year=year,
+        created__month=month,
+
+    ).count()
+
+
     # pie chart
     # Get filter from templates
-    year = req.GET.get('year', now.year)
-    month = req.GET.get('month', now.month)
+    
 
     queryset = OrderDetail.objects.filter(
         updated__year=year,
