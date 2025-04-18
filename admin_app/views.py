@@ -60,7 +60,6 @@ def accept_order(req,id):
     orderdetail = OrderDetail.objects.filter(order=order)
     for i in orderdetail:
         product = Product.objects.get(pk=i.product.id)
-        product.stock -= i.amount
         product.save()
     return redirect('/dashboard')
 
