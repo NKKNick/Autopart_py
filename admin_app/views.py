@@ -543,6 +543,7 @@ def report(req):
     this_month_cost = AddStock.objects.filter(
         created__year=year,
         created__month=month,
+
     ).aggregate(total_sales=Sum(F('stock')*F('product__cost')))
     # more info
     worker = Worker.objects.all().count()
